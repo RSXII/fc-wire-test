@@ -1,0 +1,542 @@
+/* ============================================================
+   S.K.AM Wire Device — frame + phone-app content scaling
+   ============================================================ */
+
+/* ---- Reset body for device mode ---- */
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  background: #050403;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---- Full-viewport backdrop ---- */
+.wire-bg {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(
+      ellipse at 40% 35%,
+      rgba(60, 40, 8, 0.35) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 70% 80%,
+      rgba(30, 18, 4, 0.4) 0%,
+      transparent 50%
+    ),
+    #07060404;
+  overflow: hidden;
+}
+
+/* ---- Device outer wrapper (holds side buttons outside the device face) ---- */
+.wire-device-wrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  /* No filter here — filter creates a containing block for position:fixed,
+     which would trap the lightbox overlay. Shadow is on .wire-device instead. */
+}
+
+/* ---- Side buttons ---- */
+.wire-buttons-left,
+.wire-buttons-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 2;
+}
+
+.wire-buttons-left {
+  justify-content: flex-start;
+  padding-top: 160px;
+  margin-right: -1px;
+}
+
+.wire-buttons-right {
+  justify-content: flex-start;
+  padding-top: 140px;
+  margin-left: -1px;
+}
+
+.wire-btn {
+  width: 5px;
+  border-radius: 3px 0 0 3px;
+  background: linear-gradient(180deg, #3a2b0c 0%, #6b5020 45%, #3a2b0c 100%);
+  box-shadow:
+    -2px 0 8px rgba(0, 0, 0, 0.8),
+    inset 1px 0 0 rgba(184, 144, 47, 0.15);
+}
+
+.wire-buttons-left .wire-btn:nth-child(1) {
+  height: 44px;
+}
+.wire-buttons-left .wire-btn:nth-child(2) {
+  height: 44px;
+}
+
+.wire-buttons-right .wire-btn {
+  height: 70px;
+  border-radius: 0 3px 3px 0;
+  box-shadow:
+    2px 0 8px rgba(0, 0, 0, 0.8),
+    inset -1px 0 0 rgba(184, 144, 47, 0.15);
+}
+
+/* ---- Main device body ---- */
+.wire-device {
+  position: relative;
+  width: 540px;
+  height: min(900px, calc(100vh - 24px));
+  background: linear-gradient(175deg, #0e0c09 0%, #080705 50%, #0a0806 100%);
+  border-radius: 20px;
+  /* Layered gold trim ring */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    0 0 0 1px #1e1608,
+    0 0 0 2px #5a4218,
+    0 0 0 3.5px #b8902f,
+    0 0 0 5px #4a3410,
+    0 0 0 7px #18120608;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---- LED light ledge (top of device, above screen) ---- */
+.wire-top-ledge {
+  flex-shrink: 0;
+  height: 28px;
+  background: #030201;
+  border-bottom: 1px solid #1c1508;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Amber LED strip via repeating gradient */
+.wire-top-ledge::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 240px;
+  height: 10px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 2px,
+    #9a5c18 2px,
+    #d08030 5px,
+    #e89840 6px,
+    #d08030 7px,
+    #9a5c18 9px,
+    transparent 9px,
+    transparent 15px
+  );
+  border-radius: 3px;
+  box-shadow:
+    0 0 10px 3px rgba(200, 110, 30, 0.6),
+    0 0 24px 6px rgba(170, 85, 15, 0.3);
+}
+
+/* ---- Device header row: S.K.AM branding ---- */
+.wire-device-header {
+  flex-shrink: 0;
+  height: 30px;
+  background: #060504;
+  border-bottom: 1px solid #16110708;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 18px;
+  gap: 6px;
+}
+
+.wire-brand-mark {
+  font-family: "Arial", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #b8902f;
+  text-shadow: 0 0 12px rgba(184, 144, 47, 0.45);
+}
+
+.wire-logo-glyph {
+  font-size: 10px;
+  color: #c8a040;
+  opacity: 0.75;
+  text-shadow: 0 0 8px rgba(200, 160, 64, 0.6);
+}
+
+/* ---- Screen bezel + screen container ---- */
+.wire-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 8px 10px 10px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #0a0907;
+  box-shadow:
+    0 0 0 1px rgba(184, 144, 47, 0.1),
+    inset 0 2px 10px rgba(0, 0, 0, 0.7);
+  min-height: 0;
+}
+
+/* ---- Status bar (top of screen) ---- */
+.wire-status-bar {
+  flex-shrink: 0;
+  height: 26px;
+  background: #040302;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(184, 144, 47, 0.1);
+}
+
+.wire-status-left,
+.wire-status-right {
+  font-family: "Arial", sans-serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #b8902f;
+  white-space: nowrap;
+}
+
+/* ---- Scrollable content area ---- */
+.wire-screen-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #15130f;
+  min-height: 0;
+  /* Thin gold scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #3a2a0e #0c0a07;
+}
+
+.wire-screen-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.wire-screen-content::-webkit-scrollbar-track {
+  background: #0c0a07;
+}
+
+.wire-screen-content::-webkit-scrollbar-thumb {
+  background: #3a2a0e;
+  border-radius: 2px;
+}
+
+.wire-screen-content::-webkit-scrollbar-thumb:hover {
+  background: #6b5020;
+}
+
+/* ---- Bottom nav bar / home indicator ---- */
+.wire-nav-bar {
+  flex-shrink: 0;
+  height: 28px;
+  background: #040302;
+  border-top: 1px solid rgba(184, 144, 47, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wire-home-indicator {
+  display: block;
+  width: 90px;
+  height: 3px;
+  background: rgba(184, 144, 47, 0.28);
+  border-radius: 2px;
+}
+
+/* ============================================================
+   Phone-app feel — content overrides scoped inside device screen
+   All 28px horizontal paddings become 14px; font sizes scaled down
+   for a readable ~520px screen width.
+   ============================================================ */
+
+/* Cover / hero section */
+.wire-screen-content .cover {
+  max-width: 100%;
+  padding: 24px 16px 14px;
+  margin-bottom: 16px;
+}
+
+.wire-screen-content .cover h1 {
+  font-size: 26px;
+  letter-spacing: 2px;
+}
+
+.wire-screen-content .cover h2 {
+  font-size: 12px;
+  letter-spacing: 4px;
+  margin: 8px 0 12px;
+}
+
+.wire-screen-content .cover p {
+  font-size: 13px;
+  max-width: 100%;
+  line-height: 1.6;
+}
+
+.wire-screen-content .cover-rule {
+  margin: 12px auto;
+}
+
+/* Section dividers */
+.wire-screen-content .section-divider {
+  max-width: 100%;
+  margin: 24px 0 10px;
+}
+
+.wire-screen-content .section-divider.first {
+  margin-top: 2px;
+}
+
+.wire-screen-content .section-divider-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+/* Cards */
+.wire-screen-content .card {
+  max-width: 100%;
+  margin: 0 0 14px;
+}
+
+/* Dossier header row */
+.wire-screen-content .dossier-head {
+  padding: 10px 14px 0;
+  font-size: 9.5px;
+}
+
+.wire-screen-content .hr {
+  margin: 8px 14px 0;
+}
+
+/* Name block */
+.wire-screen-content .name-block {
+  padding: 12px 14px 4px;
+}
+
+.wire-screen-content .name-block h2 {
+  font-size: 18px;
+}
+
+.wire-screen-content .name-block .epithet {
+  font-size: 12px;
+  margin: 4px 0 0;
+}
+
+/* Gallery thumbnails */
+.wire-screen-content .gallery {
+  padding: 10px 14px 6px;
+  gap: 8px;
+}
+
+.wire-screen-content .gallery .thumb {
+  width: 66px;
+  height: 66px;
+}
+
+/* Stats table */
+.wire-screen-content .stats {
+  margin: 10px 14px 4px;
+}
+
+.wire-screen-content .stat-row {
+  font-size: 12px;
+  gap: 10px;
+  padding: 3px 0;
+  /* Always keep label + value side-by-side; override the mobile
+     flex-direction:column rule from the page's own media query */
+  flex-direction: row !important;
+}
+
+.wire-screen-content .stat-row .label {
+  flex: 0 0 90px !important;
+  font-size: 10px;
+}
+
+/* Section body */
+.wire-screen-content .section {
+  padding: 4px 14px 0;
+}
+
+.wire-screen-content .section h3 {
+  font-size: 10.5px;
+  letter-spacing: 1.5px;
+  margin: 14px 0 8px;
+  padding-bottom: 5px;
+}
+
+.wire-screen-content .section p {
+  font-size: 13px;
+  line-height: 1.62;
+  margin: 0 0 10px;
+}
+
+/* Hook list */
+.wire-screen-content ul.hooks li {
+  font-size: 13px;
+  margin: 0 0 7px;
+}
+
+/* Blockquote */
+.wire-screen-content blockquote {
+  margin: 10px 14px 6px;
+  padding: 5px 0 5px 14px;
+  font-size: 13px;
+}
+
+.wire-screen-content blockquote .cite {
+  font-size: 10.5px;
+}
+
+/* Redacted gate (password input) */
+.wire-screen-content .redacted-gate {
+  margin: 4px 14px 14px;
+  padding: 12px 12px;
+}
+
+.wire-screen-content .redacted-gate input {
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 7px 10px;
+  width: 120px;
+}
+
+.wire-screen-content .redacted-gate button {
+  font-size: 14px;
+  padding: 7px 12px;
+}
+
+/* Redacted reveal block */
+.wire-screen-content .redacted-block {
+  margin: 4px 14px 14px;
+  padding: 13px 13px;
+}
+
+.wire-screen-content .redacted-block .redacted-heading {
+  font-size: 10px;
+}
+
+.wire-screen-content .redacted-block .redacted-sub {
+  font-size: 10px;
+}
+
+.wire-screen-content .redacted-block p {
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+/* Footer pad */
+.wire-screen-content .footer-pad {
+  height: 14px;
+}
+
+/* ============================================================
+   Responsive — on narrow viewports the device fills the screen
+   ============================================================ */
+@media (max-width: 620px) {
+  html,
+  body {
+    /* Belt-and-suspenders: keep the document from scrolling
+       behind the device on narrow viewports */
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .wire-bg {
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .wire-device-wrap {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+  }
+
+  .wire-device {
+    flex: 1;
+    width: 100%;
+    /* Use 100% instead of 100vh — avoids the mobile browser
+       address-bar / toolbar height mismatch */
+    height: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .wire-buttons-left,
+  .wire-buttons-right {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Print — hide device chrome; content prints normally
+   The inline @media print in each HTML file still applies.
+   ============================================================ */
+@media print {
+  .wire-bg {
+    display: block;
+    background: none;
+    width: auto;
+    height: auto;
+    overflow: visible;
+  }
+
+  .wire-device-wrap {
+    display: block;
+  }
+
+  .wire-buttons-left,
+  .wire-buttons-right,
+  .wire-top-ledge,
+  .wire-device-header,
+  .wire-status-bar,
+  .wire-nav-bar {
+    display: none;
+  }
+
+  .wire-device {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    overflow: visible;
+  }
+
+  .wire-screen {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .wire-screen-content {
+    overflow: visible;
+    height: auto;
+    background: #fff;
+  }
+}

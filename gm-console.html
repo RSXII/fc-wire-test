@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="theme-color" content="#0c0f16" />
+    <script src="sw-register.js" defer></script>
+    <title>Fate City: 1999 &mdash; GM Console</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: #0d1118;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+        color: #e8dfc8;
+      }
+      body {
+        padding: 20px 16px 40px;
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #c9a227;
+        margin: 0 0 2px;
+      }
+      .subtitle {
+        font-size: 11px;
+        color: #3a4a5a;
+        letter-spacing: 0.5px;
+        margin: 0 0 24px;
+      }
+      .section {
+        margin-bottom: 26px;
+      }
+      .section-label {
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #6a7d90;
+        margin-bottom: 10px;
+      }
+      .section-label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .chip-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        border: 1px solid;
+        border-radius: 20px;
+        padding: 5px 14px 5px 6px;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        background: transparent;
+        transition:
+          background 0.15s ease,
+          transform 0.1s ease;
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .chip:active {
+        transform: scale(0.96);
+      }
+      .chip-avatar {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        object-fit: cover;
+        object-position: 50% 20%;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        flex-shrink: 0;
+      }
+      .chip.selected {
+        box-shadow: inset 0 0 0 1px currentColor;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 70px;
+        background: #0c0f16;
+        border: 1px solid #1a2030;
+        border-radius: 8px;
+        color: #e8dfc8;
+        font-family: inherit;
+        font-size: 13.5px;
+        padding: 10px 12px;
+        resize: vertical;
+        outline: none;
+      }
+      textarea:focus {
+        border-color: #c9a227;
+      }
+      textarea::placeholder {
+        color: #3a4a5a;
+      }
+
+      .selected-line {
+        font-size: 11.5px;
+        color: #6a7d90;
+        margin: 8px 0 10px;
+        min-height: 16px;
+      }
+      .selected-line strong {
+        font-weight: 600;
+      }
+
+      button.primary {
+        background: #c9a227;
+        color: #15130f;
+        border: none;
+        border-radius: 8px;
+        padding: 11px 18px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        cursor: pointer;
+        width: 100%;
+      }
+      button.primary:active {
+        transform: scale(0.98);
+      }
+      button.primary:disabled {
+        background: #2a2a26;
+        color: #5a5650;
+        cursor: not-allowed;
+      }
+
+      .ghost-btn {
+        background: none;
+        border: 1px solid #3a4a5a;
+        color: #6a7d90;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 10.5px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+      .ghost-btn:hover {
+        border-color: #6a7d90;
+        color: #c9a227;
+      }
+
+      .attach-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .attached-preview {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #0c0f16;
+        border: 1px solid #1a2030;
+        border-radius: 8px;
+        padding: 4px 8px 4px 4px;
+        font-size: 11.5px;
+        color: #6a7d90;
+      }
+      .attached-preview img {
+        width: 28px;
+        height: 28px;
+        border-radius: 5px;
+        object-fit: cover;
+      }
+      .attached-preview button {
+        background: none;
+        border: none;
+        color: #6a7d90;
+        font-size: 15px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0 2px;
+      }
+      .attached-preview button:hover {
+        color: #e24b4a;
+      }
+
+      .image-picker {
+        margin-top: 10px;
+        background: #0c0f16;
+        border: 1px solid #1a2030;
+        border-radius: 8px;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+        gap: 8px;
+        max-height: 220px;
+        overflow-y: auto;
+      }
+      .img-thumb {
+        cursor: pointer;
+        border-radius: 6px;
+        overflow: hidden;
+        aspect-ratio: 1;
+        border: 1px solid #1a2030;
+        transition: border-color 0.15s ease;
+      }
+      .img-thumb:hover {
+        border-color: #c9a227;
+      }
+      .img-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .img-picker-status {
+        grid-column: 1 / -1;
+        font-size: 12px;
+        font-style: italic;
+        color: #3a4a5a;
+        text-align: center;
+        padding: 10px 0;
+      }
+      .img-picker-status.err {
+        color: #e24b4a;
+        font-style: normal;
+      }
+
+      .log {
+        background: #0c0f16;
+        border: 1px solid #1a2030;
+        border-radius: 8px;
+        padding: 12px 14px;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+      .log-empty {
+        font-size: 12px;
+        font-style: italic;
+        color: #3a4a5a;
+        text-align: center;
+        padding: 10px 0;
+      }
+      .log-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+        font-size: 12.5px;
+        line-height: 1.5;
+      }
+      .log-row:last-child {
+        margin-bottom: 0;
+      }
+      .log-name {
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .log-text {
+        color: rgba(232, 223, 200, 0.85);
+        white-space: pre-line;
+      }
+      .log-time {
+        color: #3a4a5a;
+        font-size: 10px;
+        margin-left: 6px;
+      }
+
+      .status-line {
+        font-size: 11px;
+        color: #6a7d90;
+        margin-top: 8px;
+        min-height: 14px;
+      }
+      .status-line.ok {
+        color: #639922;
+      }
+      .status-line.err {
+        color: #e24b4a;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Fate City &mdash; Wire Console</h1>
+    <p class="subtitle">
+      Pick a sender, write the line, send it to the players' group thread.
+    </p>
+
+    <div class="section">
+      <div class="section-label">Sender</div>
+      <div class="chip-grid" id="chip-grid"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Message</div>
+      <div class="selected-line" id="selected-line">
+        No sender selected yet.
+      </div>
+      <textarea
+        id="msg-input"
+        placeholder="Type what they'd actually text..."
+      ></textarea>
+
+      <div class="attach-row">
+        <button class="ghost-btn" id="browse-img-btn" type="button">
+          + Attach image
+        </button>
+        <div
+          class="attached-preview"
+          id="attached-preview"
+          style="display: none"
+        ></div>
+      </div>
+      <div class="image-picker" id="image-picker" style="display: none"></div>
+
+      <div style="height: 10px"></div>
+      <button class="primary" id="send-btn" disabled>
+        Send to group thread
+      </button>
+      <div class="status-line" id="status-line"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label-row">
+        <div class="section-label" style="margin-bottom: 0">Thread (live)</div>
+        <button class="ghost-btn" id="clear-btn">Clear thread</button>
+      </div>
+      <div class="log" id="log"></div>
+    </div>
+
+    <script>
+      var SENDERS = [
+        {
+          id: "casven",
+          name: "Casven Elm",
+          color: "#1f6fb2",
+          avatar: "images/casven_pf.png",
+        },
+        {
+          id: "elarthis",
+          name: "Elarthis Löfgren",
+          color: "#8c3a5d",
+          avatar: "images/elarthis_pf.png",
+        },
+        {
+          id: "solenne",
+          name: "Solenne Galvère",
+          color: "#8c2e2e",
+          avatar: "images/solenne_pf.png",
+        },
+        {
+          id: "meros",
+          name: "Meros Zarzer",
+          color: "#7a4fc9",
+          avatar: "images/meros_pf.png",
+        },
+        {
+          id: "nocturne",
+          name: "Nocturne",
+          color: "#c9a227",
+          avatar: "images/nocturne_pf.png",
+        },
+        {
+          id: "simbelle",
+          name: "Sim-Belle",
+          color: "#1a6e6e",
+          avatar: "images/simbelle_pf.png",
+        },
+        {
+          id: "durn",
+          name: "Durn Thalgor",
+          color: "#c9512f",
+          avatar: "images/durn_pf.png",
+        },
+        {
+          id: "tivy",
+          name: "Tivy Glintspark",
+          color: "#9a7fd9",
+          avatar: "images/tivy_pf.png",
+        },
+        {
+          id: "nightcrows",
+          name: "Night Crows",
+          color: "#a13c3c",
+          avatar: "images/nightcrows_pf.png",
+        },
+        {
+          id: "laurent",
+          name: "Laurent Virel",
+          color: "#2f7fa6",
+          avatar: "images/laurent_pf.png",
+        },
+        {
+          id: "patch",
+          name: "Patch",
+          color: "#4caf50",
+          avatar: "images/patch_pf.png",
+        },
+        {
+          id: "enforcer",
+          name: "Street Enforcer",
+          color: "#c94f4f",
+          avatar: "images/street_enforcer_pf.png",
+        },
+        {
+          id: "saint",
+          name: "Saint",
+          color: "#d98c3f",
+          avatar: "images/saint_pf.png",
+        },
+        {
+          id: "agency",
+          name: "The Agency",
+          color: "#6b6b6b",
+          avatar: "images/agency_pf.png",
+        },
+        {
+          id: "traumateam",
+          name: "Trauma Team",
+          color: "#d4453d",
+          avatar: "images/traumateam_pf.png",
+        },
+        {
+          id: "galvere",
+          name: "Galvère",
+          color: "#8c2e2e",
+          avatar: "images/galvere_pf.png",
+        },
+        {
+          id: "skam",
+          name: "S.K.AM",
+          color: "#2f7fa6",
+          avatar: "images/skam_pf.png",
+        },
+        {
+          id: "fcpd",
+          name: "FCPD",
+          color: "#6b8aa6",
+          avatar: "images/fcpd_pf.png",
+        },
+        {
+          id: "fcrecords",
+          name: "Fate City Records",
+          color: "#d9a23f",
+          avatar: "images/fcrecords_pf.png",
+        },
+      ];
+
+      var GITHUB_IMAGES_API =
+        "https://api.github.com/repos/RSXII/fate-city-1999/contents/images/messages";
+      var selectedImage = null; // { name, url }
+
+      var selectedSender = null;
+      var chipGrid = document.getElementById("chip-grid");
+      var selectedLine = document.getElementById("selected-line");
+      var msgInput = document.getElementById("msg-input");
+      var sendBtn = document.getElementById("send-btn");
+      var statusLine = document.getElementById("status-line");
+      var logEl = document.getElementById("log");
+      var clearBtn = document.getElementById("clear-btn");
+
+      SENDERS.forEach(function (s) {
+        var chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "chip";
+        chip.style.color = s.color;
+        chip.style.borderColor = s.color;
+        chip.innerHTML =
+          '<img class="chip-avatar" src="' +
+          s.avatar +
+          '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' +
+          "<span>" +
+          s.name +
+          "</span>";
+        chip.addEventListener("click", function () {
+          selectedSender = s;
+          document.querySelectorAll(".chip").forEach(function (c) {
+            c.classList.remove("selected");
+          });
+          chip.classList.add("selected");
+          selectedLine.innerHTML =
+            'Sending as <strong style="color:' +
+            s.color +
+            '">' +
+            s.name +
+            "</strong>";
+          updateSendState();
+        });
+        chipGrid.appendChild(chip);
+      });
+
+      function updateSendState() {
+        sendBtn.disabled = !(
+          selectedSender &&
+          (msgInput.value.trim().length > 0 || selectedImage)
+        );
+      }
+      msgInput.addEventListener("input", updateSendState);
+
+      function escapeAttr(s) {
+        return String(s == null ? "" : s)
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function showAttachedPreview() {
+        var el = document.getElementById("attached-preview");
+        if (!selectedImage) {
+          el.style.display = "none";
+          el.innerHTML = "";
+          return;
+        }
+        el.style.display = "flex";
+        el.innerHTML =
+          '<img src="' +
+          escapeAttr(selectedImage.url) +
+          '" alt="">' +
+          "<span>" +
+          escapeHtml(selectedImage.name) +
+          "</span>" +
+          '<button type="button" id="remove-img-btn" title="Remove">&times;</button>';
+        document
+          .getElementById("remove-img-btn")
+          .addEventListener("click", function () {
+            selectedImage = null;
+            showAttachedPreview();
+            updateSendState();
+          });
+      }
+
+      async function browseImages() {
+        var picker = document.getElementById("image-picker");
+        var isOpen = picker.style.display !== "none";
+        if (isOpen) {
+          picker.style.display = "none";
+          return;
+        }
+        picker.style.display = "grid";
+        picker.innerHTML = '<div class="img-picker-status">Loading...</div>';
+        try {
+          var res = await fetch(GITHUB_IMAGES_API);
+          if (res.status === 404) {
+            picker.innerHTML =
+              '<div class="img-picker-status">No images found in images/messages/ yet.</div>';
+            return;
+          }
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          var data = await res.json();
+          var images = data.filter(function (f) {
+            return f.type === "file" && /\.(png|jpe?g|gif|webp)$/i.test(f.name);
+          });
+          if (!images.length) {
+            picker.innerHTML =
+              '<div class="img-picker-status">No images found in images/messages/ yet.</div>';
+            return;
+          }
+          picker.innerHTML = images
+            .map(function (f) {
+              return (
+                '<div class="img-thumb" data-url="' +
+                escapeAttr(f.download_url) +
+                '" data-name="' +
+                escapeAttr(f.name) +
+                '">' +
+                '<img src="' +
+                escapeAttr(f.download_url) +
+                '" alt="' +
+                escapeAttr(f.name) +
+                '" loading="lazy">' +
+                "</div>"
+              );
+            })
+            .join("");
+          picker.querySelectorAll(".img-thumb").forEach(function (thumb) {
+            thumb.addEventListener("click", function () {
+              selectedImage = {
+                url: thumb.getAttribute("data-url"),
+                name: thumb.getAttribute("data-name"),
+              };
+              showAttachedPreview();
+              picker.style.display = "none";
+              updateSendState();
+            });
+          });
+        } catch (e) {
+          picker.innerHTML =
+            '<div class="img-picker-status err">Failed to load: ' +
+            escapeHtml(e.message || "unknown error") +
+            "</div>";
+        }
+      }
+      document
+        .getElementById("browse-img-btn")
+        .addEventListener("click", browseImages);
+
+      function escapeHtml(s) {
+        var d = document.createElement("div");
+        d.textContent = s == null ? "" : String(s);
+        return d.innerHTML;
+      }
+
+      function relTime(ts) {
+        var diff = Math.max(0, Date.now() - ts);
+        var s = Math.floor(diff / 1000);
+        if (s < 10) return "now";
+        if (s < 60) return s + "s ago";
+        var m = Math.floor(s / 60);
+        if (m < 60) return m + "m ago";
+        var h = Math.floor(m / 60);
+        if (h < 24) return h + "h ago";
+        var d2 = Math.floor(h / 24);
+        return d2 + "d ago";
+      }
+
+      var FIREBASE_URL = "https://cpr-wire-device-default-rtdb.firebaseio.com";
+
+      async function loadMessages() {
+        try {
+          var res = await fetch(FIREBASE_URL + "/messages.json");
+          if (!res.ok) return [];
+          var data = await res.json();
+          if (!data) return [];
+          return Object.keys(data)
+            .map(function (k) {
+              var m = data[k];
+              m.id = k;
+              return m;
+            })
+            .sort(function (a, b) {
+              return a.ts - b.ts;
+            });
+        } catch (e) {
+          return [];
+        }
+      }
+
+      async function pushMessage(msg) {
+        var res = await fetch(FIREBASE_URL + "/messages.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(msg),
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      }
+
+      async function clearAllMessages() {
+        var res = await fetch(FIREBASE_URL + "/messages.json", {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+      }
+
+      function renderLog(messages) {
+        if (!messages.length) {
+          logEl.innerHTML =
+            '<div class="log-empty">No messages sent yet.</div>';
+          return;
+        }
+        logEl.innerHTML = messages
+          .map(function (m) {
+            var body = m.imageUrl
+              ? "📷 " + (m.text ? escapeHtml(m.text) : "<em>Photo</em>")
+              : escapeHtml(m.text);
+            return (
+              '<div class="log-row">' +
+              '<span class="log-name" style="color:' +
+              m.color +
+              '">' +
+              escapeHtml(m.sender) +
+              ":</span>" +
+              '<span class="log-text">' +
+              body +
+              '<span class="log-time">' +
+              relTime(m.ts) +
+              "</span></span>" +
+              "</div>"
+            );
+          })
+          .join("");
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      async function refreshLog() {
+        var messages = await loadMessages();
+        renderLog(messages);
+      }
+
+      sendBtn.addEventListener("click", async function () {
+        var text = msgInput.value.trim();
+        if (!selectedSender || (!text && !selectedImage)) return;
+        sendBtn.disabled = true;
+        statusLine.textContent = "Sending...";
+        statusLine.className = "status-line";
+        try {
+          var payload = {
+            sender: selectedSender.name,
+            color: selectedSender.color,
+            text: text,
+            ts: Date.now(),
+          };
+          if (selectedImage) payload.imageUrl = selectedImage.url;
+          await pushMessage(payload);
+          msgInput.value = "";
+          selectedImage = null;
+          showAttachedPreview();
+          statusLine.textContent = "Sent.";
+          statusLine.className = "status-line ok";
+          refreshLog();
+        } catch (e) {
+          statusLine.textContent =
+            "Send failed: " + (e && e.message ? e.message : "unknown error");
+          statusLine.className = "status-line err";
+        }
+        updateSendState();
+      });
+
+      clearBtn.addEventListener("click", async function () {
+        if (
+          !confirm(
+            "Clear the entire group thread for all players? This cannot be undone.",
+          )
+        )
+          return;
+        try {
+          await clearAllMessages();
+          renderLog([]);
+          statusLine.textContent = "Thread cleared.";
+          statusLine.className = "status-line ok";
+        } catch (e) {
+          statusLine.textContent =
+            "Clear failed: " + (e && e.message ? e.message : "unknown error");
+          statusLine.className = "status-line err";
+        }
+      });
+
+      refreshLog();
+      setInterval(refreshLog, 4000);
+    </script>
+  </body>
+</html>

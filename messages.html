@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="theme-color" content="#0c0f16" />
+    <script src="sw-register.js" defer></script>
+    <title>Fate City: 1999 &mdash; Messages</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: #0d1118;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+        overflow-x: hidden;
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      .wire-once {
+        height: 4px;
+        background: #7c3aed;
+        flex-shrink: 0;
+      }
+      .wire-status {
+        height: 36px;
+        background: #0c0f16;
+        border-bottom: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .wire-status-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .wire-sig {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 12px;
+      }
+      .wire-sig span {
+        width: 3px;
+        border-radius: 1px;
+        background: #c9a227;
+        display: inline-block;
+      }
+      .wire-skam {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        color: #c9a227;
+      }
+      .wire-jail {
+        font-size: 8.5px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #e05a3a;
+        border: 1px solid rgba(224, 90, 58, 0.4);
+        background: rgba(224, 90, 58, 0.08);
+        padding: 2px 5px;
+        border-radius: 2px;
+      }
+      .wire-clock {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11.5px;
+        color: #6a7d90;
+        letter-spacing: 0.3px;
+      }
+      .wire-batt {
+        width: 20px;
+        height: 11px;
+        border: 1.5px solid #4a5a6a;
+        border-radius: 2px;
+        padding: 1.5px;
+        position: relative;
+      }
+      .wire-batt::after {
+        content: "";
+        position: absolute;
+        right: -4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 5px;
+        background: #4a5a6a;
+        border-radius: 0 1px 1px 0;
+      }
+      .wire-batt-fill {
+        height: 100%;
+        width: 72%;
+        background: #c9a227;
+        border-radius: 1px;
+      }
+
+      .msg-header {
+        flex-shrink: 0;
+        background: #0c0f16;
+        border-bottom: 1px solid #1a2030;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .msg-back {
+        font-size: 20px;
+        color: #c9a227;
+        text-decoration: none;
+        opacity: 0.9;
+        line-height: 1;
+        flex-shrink: 0;
+        position: relative;
+        padding: 8px;
+        margin: -8px;
+      }
+      .msg-back:hover {
+        opacity: 1;
+      }
+      .msg-back::before {
+        content: "";
+        position: absolute;
+        top: -8px;
+        bottom: -8px;
+        left: -8px;
+        right: -8px;
+      }
+      .msg-live-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #c9a227;
+        flex-shrink: 0;
+        animation: live-pulse 2s ease-in-out infinite;
+      }
+      @keyframes live-pulse {
+        0%,
+        100% {
+          opacity: 0.35;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      .msg-header-avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 1px solid;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10.5px;
+        font-weight: 700;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .msg-header-title {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: #e8dfc8;
+      }
+      .msg-header-sub {
+        font-size: 9.5px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #3a4a5a;
+        margin-top: 2px;
+      }
+
+      .msg-feed {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 16px 8px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(184, 144, 47, 0.2) transparent;
+      }
+      .msg-feed::-webkit-scrollbar {
+        width: 3px;
+      }
+      .msg-feed::-webkit-scrollbar-thumb {
+        background: rgba(184, 144, 47, 0.25);
+        border-radius: 2px;
+      }
+
+      /* ---- thread (single-sender) view ---- */
+      .msg-row {
+        display: flex;
+        gap: 10px;
+        max-width: 480px;
+        margin: 0 auto 16px;
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+          opacity 0.4s ease,
+          transform 0.4s ease;
+      }
+      .msg-row.in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .msg-avatar {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11.5px;
+        font-weight: 700;
+        position: relative;
+        overflow: hidden;
+      }
+      .msg-content {
+        flex: 1;
+        min-width: 0;
+      }
+      .msg-top {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .msg-name {
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+      .msg-time {
+        font-size: 9.5px;
+        color: rgba(232, 223, 200, 0.4);
+      }
+      .msg-bubble {
+        background: rgba(255, 255, 255, 0.04);
+        border-left: 3px solid;
+        border-radius: 4px 10px 10px 4px;
+        padding: 9px 12px;
+        font-size: 13.5px;
+        line-height: 1.5;
+        color: rgba(232, 223, 200, 0.92);
+        word-wrap: break-word;
+        white-space: pre-line;
+      }
+      .msg-bubble:has(.msg-image) {
+        padding: 6px;
+      }
+      .msg-image {
+        display: block;
+        width: 100%;
+        max-width: 280px;
+        border-radius: 8px;
+      }
+      .msg-bubble-text {
+        padding: 7px 6px 2px;
+      }
+      .msg-bubble-text:first-child {
+        padding-top: 0;
+      }
+
+      /* ---- conversation list view ---- */
+      .conv-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 12px 6px;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+        opacity: 0;
+        transform: translateY(8px);
+        transition:
+          opacity 0.35s ease,
+          transform 0.35s ease;
+      }
+      .conv-row.in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .conv-row:active {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .conv-avatar {
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        position: relative;
+        overflow: hidden;
+      }
+      .conv-content {
+        flex: 1;
+        min-width: 0;
+      }
+      .conv-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 3px;
+        gap: 8px;
+      }
+      .conv-name {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: #e8dfc8;
+      }
+      .conv-name.unread {
+        color: #f3efe6;
+      }
+      .conv-time {
+        font-size: 10px;
+        color: rgba(232, 223, 200, 0.4);
+        flex-shrink: 0;
+      }
+      .conv-preview {
+        font-size: 12px;
+        color: rgba(232, 223, 200, 0.55);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .conv-preview.unread {
+        color: rgba(232, 223, 200, 0.92);
+        font-weight: 600;
+      }
+      .conv-unread-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #c9a227;
+        flex-shrink: 0;
+      }
+
+      .msg-empty {
+        max-width: 320px;
+        margin: 60px auto;
+        text-align: center;
+        font-size: 13px;
+        font-style: italic;
+        line-height: 1.6;
+        color: #3a4a5a;
+      }
+
+      .msg-footer-note {
+        flex-shrink: 0;
+        text-align: center;
+        font-size: 9px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #2e3d4a;
+        padding: 6px 0 10px;
+      }
+
+      .wire-home {
+        flex-shrink: 0;
+        height: 32px;
+        background: #0c0f16;
+        border-top: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .wire-home-ind {
+        width: 90px;
+        height: 4px;
+        background: #1e2840;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1
+      style="
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+      "
+    >
+      Fate City: 1999 Wire Messages
+    </h1>
+
+    <div class="wire-once" aria-hidden="true"></div>
+    <div class="wire-status">
+      <div class="wire-status-left">
+        <div class="wire-sig" aria-label="Signal: 4 of 5 bars">
+          <span style="height: 4px"></span>
+          <span style="height: 6px"></span>
+          <span style="height: 9px"></span>
+          <span style="height: 11px"></span>
+          <span style="height: 12px; opacity: 0.28"></span>
+        </div>
+        <span class="wire-skam">S.K.AM</span>
+        <span class="wire-jail">JAILBROKEN</span>
+      </div>
+      <span class="wire-clock" id="wire-clock"></span>
+      <div class="wire-batt" aria-label="Battery 72%">
+        <div class="wire-batt-fill"></div>
+      </div>
+    </div>
+
+    <div class="msg-header" id="msg-header"></div>
+
+    <div class="msg-feed" id="msg-feed"></div>
+    <div class="msg-footer-note">Read only &middot; updates live</div>
+
+    <div class="wire-home">
+      <div class="wire-home-ind" aria-hidden="true"></div>
+    </div>
+
+    <script>
+      var SENDERS = [
+        {
+          name: "Casven Elm",
+          color: "#1f6fb2",
+          avatar: "images/casven_pf.png",
+        },
+        {
+          name: "Elarthis Löfgren",
+          color: "#8c3a5d",
+          avatar: "images/elarthis_pf.png",
+        },
+        {
+          name: "Solenne Galvère",
+          color: "#8c2e2e",
+          avatar: "images/solenne_pf.png",
+        },
+        {
+          name: "Meros Zarzer",
+          color: "#7a4fc9",
+          avatar: "images/meros_pf.png",
+        },
+        {
+          name: "Nocturne",
+          color: "#c9a227",
+          avatar: "images/nocturne_pf.png",
+        },
+        {
+          name: "Sim-Belle",
+          color: "#1a6e6e",
+          avatar: "images/simbelle_pf.png",
+        },
+        {
+          name: "Durn Thalgor",
+          color: "#c9512f",
+          avatar: "images/durn_pf.png",
+        },
+        {
+          name: "Tivy Glintspark",
+          color: "#9a7fd9",
+          avatar: "images/tivy_pf.png",
+        },
+        {
+          name: "Night Crows",
+          color: "#a13c3c",
+          avatar: "images/nightcrows_pf.png",
+        },
+        {
+          name: "Laurent Virel",
+          color: "#2f7fa6",
+          avatar: "images/laurent_pf.png",
+        },
+        { name: "Patch", color: "#4caf50", avatar: "images/patch_pf.png" },
+        {
+          name: "Street Enforcer",
+          color: "#c94f4f",
+          avatar: "images/street_enforcer_pf.png",
+        },
+        { name: "Saint", color: "#d98c3f", avatar: "images/saint_pf.png" },
+        {
+          name: "The Agency",
+          color: "#6b6b6b",
+          avatar: "images/agency_pf.png",
+        },
+        {
+          name: "Trauma Team",
+          color: "#d4453d",
+          avatar: "images/traumateam_pf.png",
+        },
+        { name: "Galvère", color: "#8c2e2e", avatar: "images/galvere_pf.png" },
+        { name: "S.K.AM", color: "#2f7fa6", avatar: "images/skam_pf.png" },
+        { name: "FCPD", color: "#6b8aa6", avatar: "images/fcpd_pf.png" },
+        {
+          name: "Fate City Records",
+          color: "#d9a23f",
+          avatar: "images/fcrecords_pf.png",
+        },
+      ];
+
+      var GITHUB_IMAGES_API =
+        "https://api.github.com/repos/RSXII/fate-city-1999/contents/images/messages";
+
+      function avatarFor(name) {
+        var found = SENDERS.filter(function (s) {
+          return s.name === name;
+        })[0];
+        return found ? found.avatar : null;
+      }
+
+      var FIREBASE_URL = "https://cpr-wire-device-default-rtdb.firebaseio.com";
+      var LAST_SEEN_MAP_KEY = "wire-last-seen-map";
+
+      var params = new URLSearchParams(window.location.search);
+      var activeSender = params.get("sender"); // null = list view, name = thread view
+
+      var feed = document.getElementById("msg-feed");
+      var headerEl = document.getElementById("msg-header");
+      var renderedIds = {};
+      var renderedAny = false;
+
+      function tickClock() {
+        var el = document.getElementById("wire-clock");
+        if (!el) return;
+        var n = new Date();
+        var h = String(n.getHours()).padStart(2, "0");
+        var m = String(n.getMinutes()).padStart(2, "0");
+        el.textContent = h + ":" + m;
+      }
+      tickClock();
+      setInterval(tickClock, 15000);
+
+      function escapeHtml(s) {
+        var d = document.createElement("div");
+        d.textContent = s == null ? "" : String(s);
+        return d.innerHTML;
+      }
+
+      function escapeAttr(s) {
+        return String(s == null ? "" : s)
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function avatarInner(name) {
+        var url = avatarFor(name);
+        var label = escapeHtml(initials(name));
+        if (!url) return label;
+        return (
+          label +
+          '<img src="' +
+          escapeAttr(url) +
+          '" alt="" loading="lazy" ' +
+          "onerror=\"this.style.display='none'\" " +
+          'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;border-radius:50%;">'
+        );
+      }
+
+      function hexToRgba(hex, a) {
+        var h = String(hex).replace("#", "");
+        var r = parseInt(h.substring(0, 2), 16);
+        var g = parseInt(h.substring(2, 4), 16);
+        var b = parseInt(h.substring(4, 6), 16);
+        return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+      }
+
+      function initials(name) {
+        var clean = String(name || "")
+          .replace(/^The\s+/i, "")
+          .replace(/\./g, "");
+        var parts = clean.split(/[\s-]+/).filter(Boolean);
+        if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+
+      function relTime(ts) {
+        var diff = Math.max(0, Date.now() - ts);
+        var s = Math.floor(diff / 1000);
+        if (s < 10) return "now";
+        if (s < 60) return s + "s ago";
+        var m = Math.floor(s / 60);
+        if (m < 60) return m + "m ago";
+        var h = Math.floor(m / 60);
+        if (h < 24) return h + "h ago";
+        var d = Math.floor(h / 24);
+        return d + "d ago";
+      }
+
+      function colorFor(name) {
+        var found = SENDERS.filter(function (s) {
+          return s.name === name;
+        })[0];
+        return found ? found.color : "#b8902f";
+      }
+
+      function threadUrl(name) {
+        return "messages.html?sender=" + encodeURIComponent(name);
+      }
+
+      // ---- last-seen, tracked per sender ----
+      function getLastSeenMap() {
+        try {
+          var raw = localStorage.getItem(LAST_SEEN_MAP_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          return {};
+        }
+      }
+      function setLastSeenForSender(name, ts) {
+        var map = getLastSeenMap();
+        if (!map[name] || ts > map[name]) {
+          map[name] = ts;
+          localStorage.setItem(LAST_SEEN_MAP_KEY, JSON.stringify(map));
+        }
+      }
+
+      // ---- header ----
+      function renderHeader() {
+        if (activeSender) {
+          var color = colorFor(activeSender);
+          headerEl.innerHTML =
+            '<a class="msg-back" href="messages.html" aria-label="Back to all conversations">&lsaquo;</a>' +
+            '<div class="msg-header-avatar" style="background:' +
+            hexToRgba(color, 0.16) +
+            ";border-color:" +
+            color +
+            ";color:" +
+            color +
+            '">' +
+            avatarInner(activeSender) +
+            "</div>" +
+            "<div>" +
+            '<div class="msg-header-title" style="color:' +
+            color +
+            '">' +
+            escapeHtml(activeSender) +
+            "</div>" +
+            '<div class="msg-header-sub">Fate City</div>' +
+            "</div>";
+        } else {
+          headerEl.innerHTML =
+            '<a class="msg-back" href="home.html" aria-label="Back to home screen">&lsaquo;</a>' +
+            '<span class="msg-live-dot" aria-hidden="true"></span>' +
+            "<div>" +
+            '<div class="msg-header-title">Messages</div>' +
+            '<div class="msg-header-sub">Fate City</div>' +
+            "</div>";
+        }
+      }
+      renderHeader();
+
+      function showEmptyState(text) {
+        if (feed.querySelector(".msg-empty")) return;
+        feed.innerHTML = '<div class="msg-empty">' + text + "</div>";
+      }
+      function clearEmptyState() {
+        var empty = feed.querySelector(".msg-empty");
+        if (empty) empty.remove();
+      }
+
+      // ---- thread (single sender) rendering ----
+      function appendMessage(m) {
+        clearEmptyState();
+        var color = m.color || colorFor(m.sender);
+        var bubbleInner = "";
+        if (m.imageUrl) {
+          bubbleInner +=
+            '<img class="msg-image" src="' +
+            escapeAttr(m.imageUrl) +
+            '" alt="" loading="lazy" onerror="this.style.display=\'none\'">';
+        }
+        if (m.text) {
+          bubbleInner +=
+            '<div class="msg-bubble-text">' + escapeHtml(m.text) + "</div>";
+        }
+        var row = document.createElement("div");
+        row.className = "msg-row";
+        row.setAttribute("data-id", m.id);
+        row.innerHTML =
+          '<div class="msg-avatar" style="background:' +
+          hexToRgba(color, 0.16) +
+          ";border-color:" +
+          color +
+          ";color:" +
+          color +
+          '">' +
+          avatarInner(m.sender) +
+          "</div>" +
+          '<div class="msg-content">' +
+          '<div class="msg-top">' +
+          '<span class="msg-name" style="color:' +
+          color +
+          '">' +
+          escapeHtml(m.sender) +
+          "</span>" +
+          '<span class="msg-time" data-ts="' +
+          m.ts +
+          '">' +
+          relTime(m.ts) +
+          "</span>" +
+          "</div>" +
+          '<div class="msg-bubble" style="border-left-color:' +
+          color +
+          '">' +
+          bubbleInner +
+          "</div>" +
+          "</div>";
+        feed.appendChild(row);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            row.classList.add("in");
+          });
+        });
+      }
+
+      function renderThread(messages) {
+        var filtered = messages.filter(function (m) {
+          return m.sender === activeSender;
+        });
+        if (!filtered.length) {
+          if (!renderedAny)
+            showEmptyState(
+              "Nothing from " + escapeHtml(activeSender) + " yet.",
+            );
+          return;
+        }
+        var hadNew = false;
+        var maxTs = 0;
+        filtered.forEach(function (m) {
+          if (m.ts > maxTs) maxTs = m.ts;
+          if (!renderedIds[m.id]) {
+            appendMessage(m);
+            renderedIds[m.id] = true;
+            hadNew = true;
+          }
+        });
+        renderedAny = true;
+        refreshTimestamps();
+        if (hadNew) feed.scrollTop = feed.scrollHeight;
+        setLastSeenForSender(activeSender, maxTs);
+      }
+
+      // ---- conversation list rendering ----
+      function renderList(messages) {
+        if (!messages.length) {
+          showEmptyState(
+            "Nothing yet. The city is usually loud &mdash; enjoy the quiet while it lasts.",
+          );
+          return;
+        }
+        var groups = {};
+        messages.forEach(function (m) {
+          var key = m.sender;
+          if (!groups[key])
+            groups[key] = {
+              name: m.sender,
+              color: m.color || colorFor(m.sender),
+              lastTs: 0,
+              lastText: "",
+              unread: false,
+            };
+          if (m.ts >= groups[key].lastTs) {
+            groups[key].lastTs = m.ts;
+            groups[key].lastText = m.imageUrl
+              ? "📷 " + (m.text || "Photo")
+              : m.text;
+          }
+        });
+        var lastSeenMap = getLastSeenMap();
+        var rows = Object.keys(groups).map(function (k) {
+          return groups[k];
+        });
+        rows.forEach(function (g) {
+          var seen = lastSeenMap[g.name] || 0;
+          g.unread = g.lastTs > seen;
+        });
+        rows.sort(function (a, b) {
+          return b.lastTs - a.lastTs;
+        });
+
+        feed.innerHTML = rows
+          .map(function (g) {
+            var c = g.color;
+            return (
+              '<a class="conv-row in" href="' +
+              threadUrl(g.name) +
+              '">' +
+              '<div class="conv-avatar" style="background:' +
+              hexToRgba(c, 0.16) +
+              ";border-color:" +
+              c +
+              ";color:" +
+              c +
+              '">' +
+              avatarInner(g.name) +
+              "</div>" +
+              '<div class="conv-content">' +
+              '<div class="conv-top">' +
+              '<span class="conv-name' +
+              (g.unread ? " unread" : "") +
+              '" style="' +
+              (g.unread ? "" : "color:" + c) +
+              '">' +
+              escapeHtml(g.name) +
+              "</span>" +
+              '<span class="conv-time">' +
+              relTime(g.lastTs) +
+              "</span>" +
+              "</div>" +
+              '<div class="conv-preview' +
+              (g.unread ? " unread" : "") +
+              '">' +
+              escapeHtml(g.lastText) +
+              "</div>" +
+              "</div>" +
+              (g.unread
+                ? '<span class="conv-unread-dot" aria-hidden="true"></span>'
+                : "") +
+              "</a>"
+            );
+          })
+          .join("");
+      }
+
+      function refreshTimestamps() {
+        feed.querySelectorAll(".msg-time").forEach(function (el) {
+          var ts = parseInt(el.getAttribute("data-ts"), 10);
+          if (!isNaN(ts)) el.textContent = relTime(ts);
+        });
+      }
+
+      async function poll() {
+        var messages = [];
+        try {
+          var res = await fetch(FIREBASE_URL + "/messages.json");
+          if (res.ok) {
+            var data = await res.json();
+            if (data) {
+              messages = Object.keys(data)
+                .map(function (k) {
+                  var m = data[k];
+                  m.id = k;
+                  return m;
+                })
+                .sort(function (a, b) {
+                  return a.ts - b.ts;
+                });
+            }
+          }
+        } catch (e) {
+          messages = [];
+        }
+
+        if (activeSender) {
+          renderThread(messages);
+        } else {
+          if (!messages.length) {
+            showEmptyState(
+              "Nothing yet. The city is usually loud &mdash; enjoy the quiet while it lasts.",
+            );
+          } else {
+            renderList(messages);
+          }
+        }
+      }
+
+      poll();
+      setInterval(poll, 3000);
+    </script>
+  </body>
+</html>
