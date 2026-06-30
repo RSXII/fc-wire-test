@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="theme-color" content="#0c0f16" />
+    <script src="sw-register.js" defer></script>
+    <title>Fate City: 1999 &mdash; O.N.C.E.</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: #0d1118;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+        overflow-x: hidden;
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      /* ===== WIRE CHROME ===== */
+      .wire-once {
+        height: 4px;
+        background: #7c3aed;
+        flex-shrink: 0;
+      }
+      .wire-status {
+        height: 36px;
+        background: #0c0f16;
+        border-bottom: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .wire-status-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .wire-sig {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 12px;
+      }
+      .wire-sig span {
+        width: 3px;
+        border-radius: 1px;
+        background: #c9a227;
+        display: inline-block;
+      }
+      .wire-skam {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        color: #c9a227;
+      }
+      .wire-app-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #7c3aed;
+      }
+      .wire-clock {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11.5px;
+        color: #6a7d90;
+        letter-spacing: 0.3px;
+      }
+      .wire-status-right {
+        display: flex;
+        align-items: center;
+      }
+      .wire-batt {
+        width: 20px;
+        height: 11px;
+        border: 1.5px solid #4a5a6a;
+        border-radius: 2px;
+        padding: 1.5px;
+        position: relative;
+      }
+      .wire-batt::after {
+        content: "";
+        position: absolute;
+        right: -4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 5px;
+        background: #4a5a6a;
+        border-radius: 0 1px 1px 0;
+      }
+      .wire-batt-fill {
+        height: 100%;
+        width: 72%;
+        background: #c9a227;
+        border-radius: 1px;
+      }
+      .wire-home {
+        height: 32px;
+        background: #0c0f16;
+        border-top: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-decoration: none;
+      }
+      .wire-home-ind {
+        width: 90px;
+        height: 4px;
+        background: #1e2840;
+        border-radius: 2px;
+      }
+      .wire-header {
+        height: 50px;
+        background: #0c0f16;
+        border-bottom: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 12px;
+        flex-shrink: 0;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+      }
+      .wire-hdr-back {
+        font-size: 22px;
+        color: #c9a227;
+        opacity: 0.9;
+        user-select: none;
+        text-decoration: none;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 8px;
+        margin: -8px;
+      }
+      .wire-hdr-back::before {
+        content: "";
+        position: absolute;
+        top: -8px;
+        bottom: -8px;
+        left: -8px;
+        right: -8px;
+      }
+      .wire-hdr-back:hover {
+        opacity: 1;
+      }
+      .wire-hdr-text {
+        flex: 1;
+      }
+      .wire-hdr-title {
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #e8dfc8;
+        line-height: 1.1;
+      }
+      .wire-hdr-sub {
+        font-size: 9.5px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #3a4a5a;
+        margin-top: 2px;
+      }
+
+      /* ===== O.N.C.E. THREAD ===== */
+      .once-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px 16px 24px;
+        max-width: 520px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .once-header {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: rgba(124, 58, 237, 0.5);
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .once-msg {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        background: rgba(124, 58, 237, 0.12);
+        border: 1px solid rgba(124, 58, 237, 0.38);
+        border-radius: 14px;
+        padding: 12px 14px;
+        text-decoration: none;
+        box-shadow:
+          0 0 18px rgba(124, 58, 237, 0.12),
+          inset 0 0 12px rgba(124, 58, 237, 0.05);
+        transition:
+          background 0.2s ease,
+          transform 0.15s ease;
+        margin-bottom: 12px;
+      }
+      .once-msg:last-child {
+        margin-bottom: 0;
+      }
+      .once-msg:hover {
+        background: rgba(124, 58, 237, 0.2);
+      }
+      .once-msg:active {
+        transform: scale(0.98);
+      }
+      .once-avatar {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #1a0d31;
+        border: 1px solid rgba(154, 111, 217, 0.5);
+        color: #c9b3f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .once-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .once-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 4px;
+        gap: 8px;
+      }
+      .once-sender {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #e8e0f8;
+      }
+      .once-time {
+        font-size: 9px;
+        color: rgba(232, 224, 248, 0.4);
+        flex-shrink: 0;
+      }
+      .once-text {
+        font-size: 12px;
+        line-height: 1.5;
+        color: rgba(232, 224, 248, 0.85);
+      }
+      .once-link-hint {
+        font-size: 9.5px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: rgba(124, 58, 237, 0.7);
+        margin-top: 6px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== WIRE CHROME ===== -->
+    <div class="wire-once" aria-hidden="true"></div>
+    <div class="wire-status">
+      <div class="wire-status-left">
+        <div class="wire-sig" aria-label="Signal">
+          <span style="height: 4px"></span>
+          <span style="height: 6px"></span>
+          <span style="height: 9px"></span>
+          <span style="height: 11px"></span>
+          <span style="height: 12px; opacity: 0.28"></span>
+        </div>
+        <span class="wire-skam">S.K.AM</span>
+        <span class="wire-app-label">O.N.C.E.</span>
+      </div>
+      <span class="wire-clock" id="wire-clock"></span>
+      <div class="wire-status-right">
+        <div class="wire-batt" aria-label="Battery">
+          <div class="wire-batt-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wire-header">
+      <a class="wire-hdr-back" href="home.html" aria-label="Back to home screen"
+        >&lsaquo;</a
+      >
+      <div class="wire-hdr-text">
+        <div class="wire-hdr-title">O.N.C.E.</div>
+        <div class="wire-hdr-sub">Fate City: 1999 &mdash; Benefactor File</div>
+      </div>
+      <span class="wire-hdr-more" aria-hidden="true">&vellip;</span>
+    </div>
+
+    <!-- ===== O.N.C.E. THREAD ===== -->
+    <div class="once-scroll">
+      <div class="once-header">Encrypted &mdash; Sender Unverified</div>
+
+      <a class="once-msg" href="persons.html">
+        <div class="once-avatar" aria-hidden="true">M</div>
+        <div class="once-body">
+          <div class="once-top">
+            <span class="once-sender">Unknown</span>
+            <span class="once-time">Now</span>
+          </div>
+          <div class="once-text">
+            Persons of Interest is ready. Everyone worth knowing in Fate City
+            &mdash; for now.
+          </div>
+          <div class="once-link-hint">Open &rarr;</div>
+        </div>
+      </a>
+
+      <a class="once-msg" href="locations.html">
+        <div class="once-avatar" aria-hidden="true">M</div>
+        <div class="once-body">
+          <div class="once-top">
+            <span class="once-sender">Unknown</span>
+            <span class="once-time">Now</span>
+          </div>
+          <div class="once-text">
+            Locations is ready. Every address worth remembering, starting with
+            the ones you&rsquo;ll need first.
+          </div>
+          <div class="once-link-hint">Open &rarr;</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- ===== WIRE HOME BAR ===== -->
+    <a class="wire-home" href="index.html" aria-label="Home">
+      <div class="wire-home-ind" aria-hidden="true"></div>
+    </a>
+
+    <script>
+      (function () {
+        var el = document.getElementById("wire-clock");
+        function tick() {
+          if (!el) return;
+          var n = new Date();
+          el.textContent =
+            String(n.getHours()).padStart(2, "0") +
+            ":" +
+            String(n.getMinutes()).padStart(2, "0");
+        }
+        tick();
+        setInterval(tick, 15000);
+      })();
+    </script>
+  </body>
+</html>

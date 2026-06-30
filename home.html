@@ -188,12 +188,47 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
       }
       .hs-icon-tile svg {
         width: 36px;
         height: 36px;
         stroke: #c9a227;
         fill: none;
+      }
+      /* O.N.C.E. tile — purple glow */
+      .once-tile {
+        border-color: rgba(124, 58, 237, 0.6);
+        box-shadow:
+          0 0 14px rgba(124, 58, 237, 0.3),
+          inset 0 0 8px rgba(124, 58, 237, 0.1);
+        animation: once-pulse 2.8s ease-in-out infinite;
+      }
+      .once-tile svg {
+        stroke: #7c3aed;
+      }
+      @keyframes once-pulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 14px rgba(124, 58, 237, 0.3),
+            inset 0 0 8px rgba(124, 58, 237, 0.1);
+        }
+        50% {
+          box-shadow:
+            0 0 24px rgba(124, 58, 237, 0.55),
+            inset 0 0 14px rgba(124, 58, 237, 0.2);
+        }
+      }
+      .once-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #7c3aed;
+        box-shadow: 0 0 6px rgba(124, 58, 237, 0.8);
       }
       .hs-icon-label {
         font-size: 9px;
@@ -406,73 +441,6 @@
         margin-top: 4px;
       }
 
-      .hs-notifs {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        padding: 0 22px;
-      }
-      .hs-notif {
-        display: flex;
-        gap: 12px;
-        align-items: flex-start;
-        background: rgba(124, 58, 237, 0.16);
-        border: 1px solid rgba(124, 58, 237, 0.45);
-        border-radius: 14px;
-        padding: 12px 14px;
-        text-decoration: none;
-        box-shadow: 0 0 16px rgba(124, 58, 237, 0.16);
-        transition:
-          background 0.2s ease,
-          transform 0.15s ease;
-      }
-      .hs-notif:hover {
-        background: rgba(124, 58, 237, 0.23);
-      }
-      .hs-notif:active {
-        transform: scale(0.98);
-      }
-      .hs-notif-avatar {
-        flex-shrink: 0;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background: #241531;
-        border: 1px solid rgba(154, 111, 217, 0.6);
-        color: #c9b3f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        font-weight: 700;
-      }
-      .hs-notif-body {
-        flex: 1;
-        min-width: 0;
-      }
-      .hs-notif-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 3px;
-        gap: 8px;
-      }
-      .hs-notif-sender {
-        font-size: 12.5px;
-        font-weight: 600;
-        color: #f0eaf9;
-      }
-      .hs-notif-time {
-        font-size: 9px;
-        color: rgba(240, 234, 249, 0.5);
-        flex-shrink: 0;
-      }
-      .hs-notif-text {
-        font-size: 11.5px;
-        line-height: 1.45;
-        color: rgba(240, 234, 249, 0.9);
-      }
-
       .hs-dots {
         display: flex;
         justify-content: center;
@@ -491,9 +459,6 @@
 
       @media (max-width: 420px) {
         .hs-row {
-          padding: 0 16px;
-        }
-        .hs-notifs {
           padding: 0 16px;
         }
         .hs-warn-box {
@@ -689,39 +654,160 @@
       </div>
 
       <div class="hs-stage hs-stage-static" id="hs-stage">
-        <div class="hs-notifs" id="hs-notifs">
-          <a class="hs-notif" href="persons.html">
-            <div class="hs-notif-avatar">M</div>
-            <div class="hs-notif-body">
-              <div class="hs-notif-top">
-                <span class="hs-notif-sender">Unknown</span>
-                <span class="hs-notif-time">Now</span>
-              </div>
-              <div class="hs-notif-text">
-                Persons of Interest is ready. Everyone worth knowing in Fate
-                City &mdash; for now.
-              </div>
+        <div class="hs-row hs-row-mid">
+          <div class="hs-icon">
+            <div class="hs-icon-tile">
+              <svg
+                viewBox="0 0 24 24"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="5.5" y="3" width="13" height="18" rx="1.5" />
+                <rect x="7.5" y="5.3" width="9" height="3.4" rx="0.5" />
+                <circle
+                  cx="8.4"
+                  cy="13"
+                  r="0.85"
+                  fill="currentColor"
+                  stroke="none"
+                />
+                <circle
+                  cx="12"
+                  cy="13"
+                  r="0.85"
+                  fill="currentColor"
+                  stroke="none"
+                />
+                <circle
+                  cx="15.6"
+                  cy="13"
+                  r="0.85"
+                  fill="currentColor"
+                  stroke="none"
+                />
+                <circle
+                  cx="8.4"
+                  cy="16.2"
+                  r="0.85"
+                  fill="currentColor"
+                  stroke="none"
+                />
+                <circle
+                  cx="12"
+                  cy="16.2"
+                  r="0.85"
+                  fill="currentColor"
+                  stroke="none"
+                />
+                <circle
+                  cx="15.6"
+                  cy="16.2"
+                  r="0.85"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
             </div>
-          </a>
-          <a class="hs-notif" href="locations.html">
-            <div class="hs-notif-avatar">M</div>
-            <div class="hs-notif-body">
-              <div class="hs-notif-top">
-                <span class="hs-notif-sender">Unknown</span>
-                <span class="hs-notif-time">Now</span>
-              </div>
-              <div class="hs-notif-text">
-                Locations is ready. Every address worth remembering, starting
-                with the ones you'll need first.
-              </div>
+            <span class="hs-icon-label">Calculator</span>
+          </div>
+          <div class="hs-icon">
+            <div class="hs-icon-tile">
+              <div class="hs-plat-glyph">P</div>
             </div>
+            <span class="hs-icon-label">Plat</span>
+          </div>
+          <a class="hs-icon" href="once.html">
+            <div class="hs-icon-tile once-tile">
+              <span class="once-badge" aria-hidden="true"></span>
+              <svg
+                viewBox="0 0 24 24"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="8.2" />
+                <circle cx="12" cy="12" r="4.6" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="1"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
+            </div>
+            <span class="hs-icon-label">O.N.C.E.</span>
           </a>
+        </div>
+        <div class="hs-row hs-row-bottom">
+          <div class="hs-icon">
+            <div class="hs-icon-tile">
+              <svg
+                viewBox="0 0 24 24"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="7.5" width="18" height="12.5" rx="2" />
+                <path d="M8.3 7.5l1.3-2.3h4.8l1.3 2.3" />
+                <circle cx="12" cy="13.7" r="3.3" />
+              </svg>
+            </div>
+            <span class="hs-icon-label">Camera</span>
+          </div>
+          <div class="hs-icon">
+            <div class="hs-icon-tile">
+              <svg
+                viewBox="0 0 24 24"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="5.5" width="18" height="13" rx="1.5" />
+                <path d="M3.6 6.8l8.4 6.3 8.4-6.3" />
+              </svg>
+            </div>
+            <span class="hs-icon-label">Email</span>
+          </div>
+          <div class="hs-icon">
+            <div class="hs-icon-tile">
+              <svg
+                viewBox="0 0 24 24"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="3.8" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="1"
+                  fill="currentColor"
+                  stroke="none"
+                />
+                <line x1="12" y1="2.3" x2="12" y2="5.3" />
+                <line x1="12" y1="18.7" x2="12" y2="21.7" />
+                <line x1="2.3" y1="12" x2="5.3" y2="12" />
+                <line x1="18.7" y1="12" x2="21.7" y2="12" />
+                <line x1="5.1" y1="5.1" x2="7.2" y2="7.2" />
+                <line x1="16.8" y1="16.8" x2="18.9" y2="18.9" />
+                <line x1="5.1" y1="18.9" x2="7.2" y2="16.8" />
+                <line x1="16.8" y1="7.2" x2="18.9" y2="5.1" />
+              </svg>
+            </div>
+            <span class="hs-icon-label">Settings</span>
+          </div>
         </div>
       </div>
 
       <div class="hs-dots">
         <span class="hs-dot active"></span>
-        <span class="hs-dot"></span>
         <span class="hs-dot"></span>
       </div>
     </div>

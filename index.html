@@ -190,12 +190,47 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        position: relative;
       }
       .hs-icon-tile svg {
         width: 36px;
         height: 36px;
         stroke: #c9a227;
         fill: none;
+      }
+      /* O.N.C.E. tile — purple glow signals unread Benefactor messages */
+      .once-tile {
+        border-color: rgba(124, 58, 237, 0.6);
+        box-shadow:
+          0 0 14px rgba(124, 58, 237, 0.3),
+          inset 0 0 8px rgba(124, 58, 237, 0.1);
+        animation: once-pulse 2.8s ease-in-out infinite;
+      }
+      .once-tile svg {
+        stroke: #7c3aed;
+      }
+      @keyframes once-pulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 14px rgba(124, 58, 237, 0.3),
+            inset 0 0 8px rgba(124, 58, 237, 0.1);
+        }
+        50% {
+          box-shadow:
+            0 0 24px rgba(124, 58, 237, 0.55),
+            inset 0 0 14px rgba(124, 58, 237, 0.2);
+        }
+      }
+      .once-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #7c3aed;
+        box-shadow: 0 0 6px rgba(124, 58, 237, 0.8);
       }
       .hs-icon-label {
         font-size: 9px;
@@ -803,8 +838,9 @@
               </div>
               <span class="hs-icon-label">Plat</span>
             </div>
-            <div class="hs-icon">
-              <div class="hs-icon-tile">
+            <a class="hs-icon" href="once.html">
+              <div class="hs-icon-tile once-tile">
+                <span class="once-badge" aria-hidden="true"></span>
                 <svg
                   viewBox="0 0 24 24"
                   stroke-width="1.6"
@@ -824,7 +860,7 @@
                 </svg>
               </div>
               <span class="hs-icon-label">O.N.C.E.</span>
-            </div>
+            </a>
           </div>
           <div class="hs-row hs-row-bottom">
             <div class="hs-icon">
@@ -940,43 +976,10 @@
             <div class="hs-warn-big">Jailbroken</div>
           </div>
         </div>
-
-        <div
-          class="hs-stage-fixed hs-fade hs-notifs hs-fade-hidden"
-          id="hs-notifs"
-        >
-          <a class="hs-notif" href="persons.html">
-            <div class="hs-notif-avatar">M</div>
-            <div class="hs-notif-body">
-              <div class="hs-notif-top">
-                <span class="hs-notif-sender">Unknown</span>
-                <span class="hs-notif-time">Now</span>
-              </div>
-              <div class="hs-notif-text">
-                Persons of Interest is ready. Everyone worth knowing in Fate
-                City &mdash; for now.
-              </div>
-            </div>
-          </a>
-          <a class="hs-notif" href="locations.html">
-            <div class="hs-notif-avatar">M</div>
-            <div class="hs-notif-body">
-              <div class="hs-notif-top">
-                <span class="hs-notif-sender">Unknown</span>
-                <span class="hs-notif-time">Now</span>
-              </div>
-              <div class="hs-notif-text">
-                Locations is ready. Every address worth remembering, starting
-                with the ones you'll need first.
-              </div>
-            </div>
-          </a>
-        </div>
       </div>
 
       <div class="hs-dots">
         <span class="hs-dot active"></span>
-        <span class="hs-dot"></span>
         <span class="hs-dot"></span>
       </div>
     </div>
@@ -1003,12 +1006,10 @@
       // Phase 0: S.K.AM splash while the device "starts up"
       // Phase 1: splash clears, jailbreak warning slides in over the icon grid
       // Phase 2: warning clears, full icon grid settles into place
-      // Phase 3: grid clears, Benefactor texts arrive in its place
       (function () {
         var splash = document.getElementById("boot-splash");
         var warning = document.getElementById("hs-warning");
         var grid = document.getElementById("hs-grid");
-        var notifs = document.getElementById("hs-notifs");
 
         setTimeout(function () {
           splash.classList.add("hide");
@@ -1022,11 +1023,6 @@
           warning.classList.add("hs-fade-hidden");
           grid.classList.remove("hs-fade-hidden");
         }, 6650);
-
-        setTimeout(function () {
-          grid.classList.add("hs-fade-hidden");
-          notifs.classList.remove("hs-fade-hidden");
-        }, 7450);
       })();
 
       // ===== WIRE NOTIFICATIONS (unread badge + toast, polls Firebase) =====
