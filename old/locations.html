@@ -1,0 +1,1136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fate City: 1999 — Locations</title>
+    <style>
+      :root {
+        --paper: #f3efe6;
+        --paper-dark: #e8e1d2;
+        --ink: #1c1a17;
+        --ink-soft: #4a4540;
+        --gold: #b8902f;
+        --line: #cfc6b0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #0d1118;
+        font-family: "Georgia", "Times New Roman", serif;
+        color: var(--ink);
+        padding-top: 94px;
+        padding-bottom: 48px;
+        overflow-x: hidden;
+      }
+      /* ===== WIRE CHROME ===== */
+      .wire-once {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: #7c3aed;
+        z-index: 200;
+      }
+      .wire-status {
+        position: fixed;
+        top: 4px; left: 0; right: 0;
+        height: 36px;
+        background: #0c0f16;
+        border-bottom: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 200;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+      }
+      .wire-status-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .wire-sig {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 12px;
+      }
+      .wire-sig span {
+        width: 3px;
+        border-radius: 1px;
+        background: #c9a227;
+        display: inline-block;
+      }
+      .wire-skam {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: .8px;
+        color: #c9a227;
+      }
+      .wire-jail {
+        font-size: 8.5px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #e05a3a;
+        border: 1px solid rgba(224,90,58,.4);
+        background: rgba(224,90,58,.08);
+        padding: 2px 5px;
+        border-radius: 2px;
+      }
+      .wire-clock {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11.5px;
+        color: #6a7d90;
+        letter-spacing: .3px;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+      }
+      .wire-status-right {
+        display: flex;
+        align-items: center;
+      }
+      .wire-batt {
+        width: 20px;
+        height: 11px;
+        border: 1.5px solid #4a5a6a;
+        border-radius: 2px;
+        padding: 1.5px;
+        position: relative;
+      }
+      .wire-batt::after {
+        content: '';
+        position: absolute;
+        right: -4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 5px;
+        background: #4a5a6a;
+        border-radius: 0 1px 1px 0;
+      }
+      .wire-batt-fill {
+        height: 100%;
+        width: 72%;
+        background: #c9a227;
+        border-radius: 1px;
+      }
+      .wire-header {
+        position: fixed;
+        top: 40px; left: 0; right: 0;
+        height: 50px;
+        background: #0c0f16;
+        border-bottom: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 12px;
+        z-index: 200;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+      }
+      .wire-hdr-back {
+        font-size: 22px;
+        color: #c9a227;
+        opacity: .9;
+        user-select: none;
+        text-decoration: none;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+      }
+      .wire-hdr-back:hover { opacity: 1; }
+      .wire-hdr-text { flex: 1; }
+      .wire-hdr-title {
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #e8dfc8;
+        line-height: 1.1;
+      }
+      .wire-hdr-sub {
+        font-size: 9.5px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #3a4a5a;
+        margin-top: 2px;
+      }
+      .wire-hdr-more {
+        font-size: 18px;
+        color: #3a4a5a;
+      }
+      .wire-home {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 32px;
+        background: #0c0f16;
+        border-top: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+      }
+      .wire-home-ind {
+        width: 90px;
+        height: 4px;
+        background: #1e2840;
+        border-radius: 2px;
+      }
+
+      .section-divider {
+        max-width: 760px;
+        margin: 48px auto 24px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .section-divider.first {
+        margin-top: 28px;
+      }
+      .section-divider::before,
+      .section-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(184, 144, 47, 0.25),
+          transparent
+        );
+      }
+      .section-divider-label {
+        font-family: "Arial", sans-serif;
+        font-size: 13px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: #8a7a3a;
+        white-space: nowrap;
+      }
+
+      .card {
+        max-width: 760px;
+        margin: 0 auto 36px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        box-shadow:
+          0 18px 40px rgba(0, 0, 0, 0.45),
+          0 0 0 1px rgba(0, 0, 0, 0.05) inset;
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.015) 0px,
+          transparent 1px,
+          transparent 2px
+        );
+        pointer-events: none;
+      }
+      .stripe {
+        height: 6px;
+      }
+
+      .dossier-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 28px 0;
+        font-family: "Arial", sans-serif;
+        font-size: 11px;
+        letter-spacing: 1px;
+        color: var(--ink-soft);
+      }
+      .dossier-head .stamp {
+        font-weight: 700;
+        letter-spacing: 1.5px;
+      }
+      .hr {
+        margin: 10px 28px 0;
+        border: none;
+        border-top: 2px solid var(--rule, var(--gold));
+      }
+
+      .name-block {
+        padding: 18px 28px 4px;
+      }
+      .name-block h2 {
+        font-family: "Arial Black", "Arial", sans-serif;
+        font-size: 30px;
+        margin: 0;
+        letter-spacing: 0.5px;
+        color: #191713;
+      }
+      .name-block .epithet {
+        font-style: italic;
+        font-size: 15px;
+        margin: 6px 0 0;
+        color: var(--accent, var(--gold));
+      }
+
+      .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 28px 6px;
+      }
+      .gallery .thumb {
+        width: 92px;
+        height: 92px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        cursor: pointer;
+        background: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .gallery .thumb:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+      }
+      .gallery .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 9, 7, 0.92);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        cursor: zoom-out;
+      }
+      .lightbox.open {
+        display: flex;
+      }
+      .lightbox img {
+        max-width: 92vw;
+        max-height: 88vh;
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+        border: 1px solid #444;
+        cursor: default;
+      }
+      .lightbox .caption {
+        position: absolute;
+        bottom: 24px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: #cfc6b0;
+        font-family: "Arial", sans-serif;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+      }
+      .lightbox .close-x {
+        position: absolute;
+        top: 18px;
+        right: 26px;
+        color: #cfc6b0;
+        font-family: "Arial", sans-serif;
+        font-size: 28px;
+        cursor: pointer;
+        line-height: 1;
+      }
+      .lightbox .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #cfc6b0;
+        font-family: "Arial", sans-serif;
+        font-size: 36px;
+        cursor: pointer;
+        padding: 10px 16px;
+        user-select: none;
+      }
+      .lightbox .nav-arrow.prev {
+        left: 6px;
+      }
+      .lightbox .nav-arrow.next {
+        right: 6px;
+      }
+
+      .stats {
+        margin: 18px 28px 4px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 10px 0;
+      }
+      .stat-row {
+        display: flex;
+        gap: 14px;
+        padding: 5px 0;
+        font-family: "Arial", sans-serif;
+        font-size: 13px;
+      }
+      .stat-row .label {
+        flex: 0 0 130px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--accent, var(--gold));
+        text-transform: uppercase;
+        font-size: 11.5px;
+      }
+      .stat-row .value {
+        color: #222;
+      }
+
+      .section {
+        padding: 6px 28px 0;
+      }
+      .section h3 {
+        font-family: "Arial", sans-serif;
+        font-size: 13px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #222;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 6px;
+        margin: 20px 0 10px;
+      }
+      .section p {
+        font-size: 15.5px;
+        line-height: 1.65;
+        color: #2a2722;
+        margin: 0 0 12px;
+      }
+      ul.hooks {
+        margin: 0 0 6px;
+        padding-left: 0;
+        list-style: none;
+      }
+      ul.hooks li {
+        font-size: 15px;
+        line-height: 1.55;
+        color: #2a2722;
+        margin: 0 0 9px;
+        padding-left: 20px;
+        position: relative;
+      }
+      ul.hooks li::before {
+        content: "\2013";
+        position: absolute;
+        left: 0;
+        color: var(--accent, var(--gold));
+        font-weight: 700;
+      }
+
+      blockquote {
+        margin: 16px 28px 6px;
+        padding: 6px 0 6px 18px;
+        border-left: 3px solid var(--accent, var(--gold));
+        font-style: italic;
+        font-size: 15px;
+        color: #3a3630;
+      }
+      blockquote .cite {
+        display: block;
+        margin-top: 6px;
+        font-style: normal;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        color: #8a8275;
+        font-family: "Arial", sans-serif;
+        text-transform: uppercase;
+      }
+
+      .footer-pad {
+        height: 24px;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+          padding: 0;
+        }
+        .card {
+          box-shadow: none;
+          page-break-after: always;
+        }
+        .wire-once,
+        .wire-status,
+        .wire-header,
+        .wire-home {
+          display: none !important;
+        }
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding-top: 94px;
+          padding-bottom: 48px;
+          padding-left: 0;
+          padding-right: 0;
+        }
+        .card {
+          max-width: 100%;
+          margin: 0 0 24px;
+        }
+        .name-block h2 {
+          font-size: 24px;
+        }
+        .name-block .epithet {
+          font-size: 15px;
+        }
+        .dossier-head {
+          padding: 12px 16px 0;
+          font-size: 10px;
+        }
+        .hr {
+          margin: 10px 16px 0;
+        }
+        .name-block {
+          padding: 14px 16px 4px;
+        }
+        .gallery {
+          padding: 12px 16px 6px;
+        }
+        .stats {
+          margin: 14px 16px 4px;
+        }
+        .stat-row {
+          flex-direction: column;
+          gap: 2px;
+          font-size: 14px;
+        }
+        .stat-row .label {
+          flex: none;
+          font-size: 11px;
+        }
+        .section {
+          padding: 6px 16px 0;
+        }
+        .section p {
+          font-size: 16.5px;
+          line-height: 1.7;
+        }
+        ul.hooks li {
+          font-size: 16px;
+        }
+        blockquote {
+          margin: 14px 16px 6px;
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== WIRE CHROME ===== -->
+    <div class="wire-once" aria-hidden="true"></div>
+    <div class="wire-status">
+      <div class="wire-status-left">
+        <div class="wire-sig" aria-label="Signal: 4 of 5 bars">
+          <span style="height:4px"></span>
+          <span style="height:6px"></span>
+          <span style="height:9px"></span>
+          <span style="height:11px"></span>
+          <span style="height:12px;opacity:.28"></span>
+        </div>
+        <span class="wire-skam">S.K.AM</span>
+        <span class="wire-jail">JAILBROKEN</span>
+      </div>
+      <span class="wire-clock" id="wire-clock"></span>
+      <div class="wire-status-right">
+        <div class="wire-batt" aria-label="Battery 72%">
+          <div class="wire-batt-fill"></div>
+        </div>
+      </div>
+    </div>
+    <div class="wire-header">
+      <a class="wire-hdr-back" href="home.html" aria-label="Back to home screen">&lsaquo;</a>
+      <div class="wire-hdr-text">
+        <div class="wire-hdr-title">Locations</div>
+        <div class="wire-hdr-sub">Fate City: 1999 &mdash; District &amp; Site Files</div>
+      </div>
+      <span class="wire-hdr-more" aria-hidden="true">&vellip;</span>
+    </div>
+
+    <div id="cards-root"></div>
+
+    <div class="lightbox" id="lightbox">
+      <span class="close-x" id="lb-close">&times;</span>
+      <span class="nav-arrow prev" id="lb-prev">&#8249;</span>
+      <img id="lb-img" src="" alt="" />
+      <span class="nav-arrow next" id="lb-next">&#8250;</span>
+      <span class="caption" id="lb-caption"></span>
+    </div>
+
+    <!-- ======================================================= -->
+    <!--  EDIT BELOW THIS LINE TO ADD / CHANGE LOCATIONS            -->
+    <!--  Everything above is layout/styling and rarely needs       -->
+    <!--  to be touched. Each object in LOCATIONS below is one      -->
+    <!--  card. Cards auto-group into sections by their "district"  -->
+    <!--  field, in the order each district first appears.          -->
+    <!-- ======================================================= -->
+    <script>
+      const LOCATIONS = [
+        {
+          id: "patchs",
+          district: "Briarwood",
+          fileNo: "BRW-01",
+          stamp: "BRIARWOOD — REPAIR / SERVICES",
+          colors: {
+            rule: "#1a3a1a",
+            accent: "#4caf50",
+            stripe: "#1a3a1a",
+            stampColor: "#4caf50",
+          },
+          name: "PATCH&rsquo;S",
+          epithet:
+            "The only shop in the city that fixes more than what you actually brought in.",
+          images: [],
+          stats: [
+            { label: "District", value: "Briarwood" },
+            {
+              label: "Type",
+              value: "Repair counter / unregistered services",
+            },
+            {
+              label: "Access",
+              value: "Walk-in up front; referral only in back",
+            },
+            { label: "Known For", value: "Fast, fair, and quiet about it" },
+            {
+              label: "Read",
+              value: "Low-risk — the safest stop in the neighborhood",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "A working repair counter for cracked housings and corroded ether-ports, wedged between a laundromat and a shuttered takeout place a few minutes&rsquo; walk from where you&rsquo;re staying. The storefront&rsquo;s actual name is barely worth knowing &mdash; everyone in the neighborhood just calls it Patch&rsquo;s, after the kid who fixes most of what comes through the door.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "The front counter is exactly what it looks like. Whatever you actually need usually isn&rsquo;t found up front.",
+                "Prices are flat, fair, and quoted before he starts &mdash; no renegotiating after the fact, in either direction.",
+                "He won&rsquo;t ask why you need any of it. That also means he won&rsquo;t warn you if you&rsquo;re about to regret needing it.",
+                "It&rsquo;s close enough to walk to from where you&rsquo;re staying. Worth remembering before you need it in a hurry.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Best ether-port repair in Briarwood. Possibly the only one.",
+            cite: "Hand-lettered sign, taped inside the front window",
+          },
+        },
+
+        {
+          id: "deckers",
+          district: "Briarwood",
+          fileNo: "BRW-02",
+          stamp: "BRIARWOOD — NIGHTLIFE / LOCAL",
+          colors: {
+            rule: "#3a2a1a",
+            accent: "#c9912f",
+            stripe: "#3a2a1a",
+            stampColor: "#c9912f",
+          },
+          name: "DECKER&rsquo;S",
+          epithet:
+            "Nobody remembers who Decker was. Everybody remembers where the bar is.",
+          images: [],
+          stats: [
+            { label: "District", value: "Briarwood" },
+            { label: "Type", value: "Neighborhood dive bar" },
+            {
+              label: "Access",
+              value: "Open to anyone; regulars get the good seats",
+            },
+            {
+              label: "Known For",
+              value: "Cheap drinks, slow nights, good gossip",
+            },
+            { label: "Read", value: "Low-stakes, high word-of-mouth" },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "A Briarwood institution that&rsquo;s outlived at least one owner and possibly several different versions of the neighborhood around it. Cash only, regulars first, and the same grainy boxing rerun has been playing on the corner TV longer than anyone working there can confirm. It pulls its crowd from warehouse shifts, retirees, and anyone looking to hear something secondhand before it&rsquo;s common knowledge.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "If you want to know what&rsquo;s happening in Briarwood before it&rsquo;s common knowledge, this is cheaper and faster than paying for it anywhere else.",
+                "Regulars get unofficial seats and unofficial credit. Earning either takes time, not money.",
+                "Spend enough nights here and you&rsquo;ll start noticing the neighborhood&rsquo;s unspoken rhythms &mdash; including a few nobody talks about out loud.",
+                "Nobody&rsquo;s ever in a hurry at Decker&rsquo;s. Acting like you are will get you noticed for the wrong reasons.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Nobody&rsquo;s ever been thrown out of Decker&rsquo;s. Mostly because nobody&rsquo;s ever given anybody a reason to bother.",
+            cite: "Overheard, regular to a first-timer",
+          },
+        },
+
+        {
+          id: "thedoc",
+          district: "Briarwood",
+          fileNo: "BRW-03",
+          stamp: "BRIARWOOD — UNREGISTERED MEDICAL",
+          colors: {
+            rule: "#1a4a4a",
+            accent: "#5fa8a8",
+            stripe: "#1a4a4a",
+            stampColor: "#5fa8a8",
+          },
+          name: "&ldquo;THE DOC&rdquo;",
+          epithet: "No sign on the door. Doesn&rsquo;t need one.",
+          images: [],
+          stats: [
+            { label: "District", value: "Briarwood" },
+            { label: "Type", value: "Off-books clinic" },
+            {
+              label: "Access",
+              value: "Word of mouth only — no sign, no listed name",
+            },
+            {
+              label: "Known For",
+              value: "No records, no questions, real skill",
+            },
+            {
+              label: "Read",
+              value: "Discreet, calm, quietly transactional",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "An unmarked row house a few streets from the garage &mdash; no sign, no business name, just an address that gets passed along by word of mouth to whoever actually needs it. Inside, a converted dining room runs like a real operating theater, because as far as the woman who works there is concerned, where the care happens never had anything to do with how good it is.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "She never asks how it happened. She usually already has a guess, and keeps it to herself either way.",
+                "Payment is cash, sliding scale, and nothing ends up written down anywhere that could be subpoenaed or hacked.",
+                "She treats some people for free. Nobody&rsquo;s ever explained why, and the people she helps that way have a habit of returning the favor eventually.",
+                "If you need patching up somewhere the Agency or the police can&rsquo;t hear about it, this is the address worth remembering.",
+              ],
+            },
+          ],
+          quote: {
+            text: "I don&rsquo;t ask. You don&rsquo;t tell. We both already know anyway.",
+            cite: "Attributed to the woman behind the door, unconfirmed",
+          },
+        },
+
+        {
+          id: "korraths",
+          district: "Briarwood",
+          fileNo: "BRW-04",
+          stamp: "BRIARWOOD — GRAY MARKET",
+          colors: {
+            rule: "#3a3a1a",
+            accent: "#8a7a3f",
+            stripe: "#3a3a1a",
+            stampColor: "#8a7a3f",
+          },
+          name: "KORRATH&rsquo;S",
+          epithet: "Looks like a junkyard. Everything in it actually works.",
+          images: [],
+          stats: [
+            { label: "District", value: "Briarwood (Industrial Square edge)" },
+            { label: "Type", value: "Surplus gear broker" },
+            { label: "Access", value: "Gate&rsquo;s usually unlocked" },
+            {
+              label: "Known For",
+              value: "Decommissioned gear, fair prices, occasional barter",
+            },
+            {
+              label: "Read",
+              value: "Functional, no-nonsense, faint military residue",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "A fenced yard and a corrugated steel building near the edge of Industrial Square, stacked with mismatched crates that look like junk and mostly aren&rsquo;t. The man who runs it used to keep the books for a much bigger, much better-funded inventory before he &ldquo;retired&rdquo; with a truck&rsquo;s worth of it that was supposed to be destroyed instead.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Nothing here is top-shelf, but everything works, and Korrath knows exactly which is which.",
+                "He doesn&rsquo;t ask what you need it for. He does sometimes ask for something other than plat, when an item matters enough to him.",
+                "Some of what&rsquo;s on these shelves was never supposed to leave a military contractor&rsquo;s inventory. Korrath&rsquo;s never confirmed whose.",
+                "If you need armor or ammunition fast and don&rsquo;t want to wait on better channels, this is the closest real option.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Everything here works. I wouldn&rsquo;t sell it to you otherwise &mdash; wouldn&rsquo;t be worth the argument.",
+            cite: "Vance Korrath, quoted by a regular customer",
+          },
+        },
+
+        {
+          id: "skam-tower",
+          district: "Downtown",
+          fileNo: "DTN-01",
+          stamp: "DOWNTOWN — CORPORATE / MILITARY",
+          colors: {
+            rule: "#0d2b3a",
+            accent: "#2f7fa6",
+            stripe: "#0d2b3a",
+            stampColor: "#2f7fa6",
+          },
+          name: "S.K.AM TOWER",
+          epithet: "Built for function, not for applause.",
+          images: [],
+          stats: [
+            { label: "District", value: "Downtown (western edge)" },
+            {
+              label: "Type",
+              value: "Corporate HQ — military magitech contractor",
+            },
+            {
+              label: "Access",
+              value: "Restricted — employees and invited guests only",
+            },
+            {
+              label: "Known For",
+              value: "Infrastructure deals, defense contracts",
+            },
+            {
+              label: "Read",
+              value: "Imposing, efficient, not built to be loved",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "The Downtown headquarters of S.K.AM Advanced Magitechnologies, sitting at the district&rsquo;s western edge rather than its center &mdash; close enough to matter, close enough to the highway interchange to move things in and out without much fuss. It&rsquo;s not built to impress anyone walking past. It&rsquo;s built to function, which says something about the company on its own.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "It sits at the edge of Downtown instead of the center, close to the highway interchange. Easier to move things in and out of than a building in the city&rsquo;s dead center would be &mdash; draw your own conclusions about why that matters to a company like this.",
+                "Security here doesn&rsquo;t bluff. Don&rsquo;t expect to talk your way past it.",
+                "The loading docks see more traffic at strange hours than the lobby ever sees in daylight.",
+                "Whatever S.K.AM officially sells the city, it&rsquo;s worth remembering this building&rsquo;s other catalog exists somewhere too &mdash; just not on any floor you&rsquo;d ever be shown.",
+              ],
+            },
+          ],
+          quote: {
+            text: "ENGINEERED FOR TOMORROW",
+            cite: "Inscription above the main entrance, S.K.AM Advanced Magitechnologies",
+          },
+        },
+
+        {
+          id: "galvere-hq",
+          district: "Downtown",
+          fileNo: "DTN-02",
+          stamp: "DOWNTOWN — CORPORATE / FASHION",
+          colors: {
+            rule: "#5b1a1a",
+            accent: "#8c2e2e",
+            stripe: "#5b1a1a",
+            stampColor: "#8c2e2e",
+          },
+          name: "GALV\u00c8RE HQ",
+          epithet:
+            "Every door in this city costs something to walk through. This one&rsquo;s just better lit.",
+          images: [],
+          stats: [
+            { label: "District", value: "Downtown" },
+            {
+              label: "Type",
+              value: "Corporate HQ — fashion house / model agency",
+            },
+            { label: "Access", value: "By appointment. Always by appointment." },
+            { label: "Known For", value: "Image, leverage, ruthless efficiency" },
+            { label: "Read", value: "Glamorous, cold, exact" },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Solenne Galv\u00e8re&rsquo;s headquarters sits comfortably in Downtown&rsquo;s center, exactly where a company built on being seen would want to be. Every surface is photograph-ready, every meeting deliberately staffed past the bare minimum, and every visitor&rsquo;s patience treated as a resource that runs out faster than they expect.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Every meeting room here has at least two exits and at least two people in it. Galv\u00e8re&rsquo;s legal team is unusually specific about that, for an industry built on charm.",
+                "Show up late, vague, or unprepared and you won&rsquo;t get a second meeting. Solenne doesn&rsquo;t make exceptions for nerves.",
+                "If something you&rsquo;ve done is interesting enough to photograph, expect Galv\u00e8re to try turning it into content before you&rsquo;ve decided how you feel about that.",
+                "The building photographs better than almost anything else Downtown. That&rsquo;s not an accident. It&rsquo;s a business decision.",
+              ],
+            },
+          ],
+          quote: {
+            text: "We don&rsquo;t sell clothes. We sell the moment right before everyone wishes they already had one.",
+            cite: "Lobby signage, Galv\u00e8re headquarters",
+          },
+        },
+
+        {
+          id: "the-aurelian",
+          district: "Downtown",
+          fileNo: "DTN-03",
+          stamp: "DOWNTOWN — POLITICAL / HOSPITALITY",
+          colors: {
+            rule: "#0a3a5c",
+            accent: "#1f6fb2",
+            stripe: "#0a3a5c",
+            stampColor: "#1f6fb2",
+          },
+          name: "THE AURELIAN",
+          epithet:
+            "Most of the hotel is open to anyone with the money. One floor is open to no one without the right name.",
+          images: [],
+          stats: [
+            { label: "District", value: "Downtown" },
+            { label: "Type", value: "Hotel — restricted top floor" },
+            {
+              label: "Access",
+              value: "Public floors open; top floor invitation only",
+            },
+            {
+              label: "Known For",
+              value: "Galas, quiet dinners, careers decided over a second drink",
+            },
+            { label: "Read", value: "Grand, warm-lit, watched" },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "A restored, old-money hotel in the heart of Downtown &mdash; public floors open to anyone who can afford the rate, one floor at the top that isn&rsquo;t open to anyone at all unless they&rsquo;ve already been let in. Galas happen up there that never make the society pages. Dinners happen up there that decide outcomes the actual Governor&rsquo;s Office only gets to file the paperwork for.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "The elevator doesn&rsquo;t have a button for the top floor. It just doesn&rsquo;t stop there unless you&rsquo;re already someone it stops for.",
+                "Nothing illegal has ever been proven to happen up there. That&rsquo;s the entire design, not an accident of good luck.",
+                "Being seen in the lobby here is its own kind of currency. Spend it carefully &mdash; everyone else in the room is doing the same math you are.",
+                "The Governor&rsquo;s actual office handles paperwork. This building is where the paperwork&rsquo;s outcomes get decided in advance.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Most of our guests never see the top floor. Most of them never notice they haven&rsquo;t.",
+            cite: "Attributed to an Aurelian concierge, off the record",
+          },
+        },
+      ];
+
+      // ===================== RENDER ENGINE =====================
+      // You shouldn't need to edit anything below this line.
+      // New districts don't need any engine changes — section
+      // dividers are generated automatically from the "district"
+      // field on each location, in order of first appearance.
+
+      function escapeAttr(str) {
+        return String(str).replace(/"/g, "&quot;");
+      }
+
+      function renderCard(loc) {
+        const c = loc.colors || {};
+        const hasImages = (loc.images || []).length > 0;
+        const gallery = hasImages
+          ? `<div class="gallery" data-gallery="${loc.id}">${loc.images
+              .map(
+                (src) => `
+                <div class="thumb" data-full="${escapeAttr(src)}" data-caption="${escapeAttr(loc.name)}">
+                  <img src="${escapeAttr(src)}" alt="${escapeAttr(loc.name)}" />
+                </div>`,
+              )
+              .join("")}</div>`
+          : "";
+
+        const stats = (loc.stats || [])
+          .map(
+            (s) => `
+                <div class="stat-row">
+                  <span class="label">${s.label}</span><span class="value">${s.value}</span>
+                </div>`,
+          )
+          .join("");
+
+        const sections = (loc.sections || [])
+          .map((sec) => {
+            const heading = sec.heading ? `<h3>${sec.heading}</h3>` : "";
+            const paras = (sec.paragraphs || [])
+              .map((p) => `<p>${p}</p>`)
+              .join("");
+            const hooks = sec.hooks
+              ? `<ul class="hooks">${sec.hooks.map((h) => `<li>${h}</li>`).join("")}</ul>`
+              : "";
+            return heading + paras + hooks;
+          })
+          .join("");
+
+        const quote = loc.quote
+          ? `<blockquote>${loc.quote.text}<span class="cite">${loc.quote.cite}</span></blockquote>`
+          : "";
+
+        return `
+              <div class="card" style="--rule:${c.rule || "#b8902f"}; --accent:${c.accent || "#b8902f"}">
+                <div class="stripe" style="background:${c.stripe || c.rule || "#b8902f"}"></div>
+                <div class="dossier-head">
+                  <span>FILE NO. ${loc.fileNo || "—"}</span>
+                  <span class="stamp" style="color:${c.stampColor || c.accent || "#b8902f"}">${loc.stamp || ""}</span>
+                </div>
+                <hr class="hr" />
+                <div class="name-block">
+                  <h2>${loc.name}</h2>
+                  <p class="epithet">${loc.epithet || ""}</p>
+                </div>
+                ${gallery}
+                <div class="stats">${stats}</div>
+                <div class="section">${sections}</div>
+                ${quote}
+                <div class="footer-pad"></div>
+              </div>`;
+      }
+
+      function renderSectionDivider(label, isFirst) {
+        return `
+              <div class="section-divider${isFirst ? " first" : ""}">
+                <span class="section-divider-label">${label}</span>
+              </div>`;
+      }
+
+      function renderAll() {
+        const root = document.getElementById("cards-root");
+        const districts = [];
+        LOCATIONS.forEach((loc) => {
+          if (!districts.includes(loc.district)) districts.push(loc.district);
+        });
+
+        let html = "";
+        districts.forEach((district, i) => {
+          html += renderSectionDivider(district, i === 0);
+          html += LOCATIONS.filter((loc) => loc.district === district)
+            .map(renderCard)
+            .join("");
+        });
+        root.innerHTML = html;
+        wireGalleries();
+      }
+
+      // ===================== LIGHTBOX =====================
+      function wireGalleries() {
+        const lightbox = document.getElementById("lightbox");
+        const lbImg = document.getElementById("lb-img");
+        const lbCaption = document.getElementById("lb-caption");
+        let currentGallery = [];
+        let currentIndex = 0;
+
+        function showCurrent() {
+          const thumb = currentGallery[currentIndex];
+          lbImg.src = thumb.getAttribute("data-full");
+          lbCaption.textContent = thumb.getAttribute("data-caption") || "";
+          const multi = currentGallery.length > 1;
+          document.getElementById("lb-prev").style.display = multi
+            ? "block"
+            : "none";
+          document.getElementById("lb-next").style.display = multi
+            ? "block"
+            : "none";
+        }
+
+        function openLightbox(galleryName, index) {
+          currentGallery = Array.prototype.slice.call(
+            document.querySelectorAll(
+              '.gallery[data-gallery="' + galleryName + '"] .thumb',
+            ),
+          );
+          currentIndex = index;
+          showCurrent();
+          lightbox.classList.add("open");
+        }
+
+        function closeLightbox() {
+          lightbox.classList.remove("open");
+          lbImg.src = "";
+        }
+
+        document.querySelectorAll(".gallery .thumb").forEach((thumb) => {
+          thumb.addEventListener("click", () => {
+            const gallery = thumb.closest(".gallery");
+            const galleryName = gallery.getAttribute("data-gallery");
+            const thumbs = Array.prototype.slice.call(
+              gallery.querySelectorAll(".thumb"),
+            );
+            openLightbox(galleryName, thumbs.indexOf(thumb));
+          });
+        });
+
+        document.getElementById("lb-close").onclick = closeLightbox;
+        lightbox.onclick = (e) => {
+          if (e.target === lightbox) closeLightbox();
+        };
+        document.getElementById("lb-prev").onclick = (e) => {
+          e.stopPropagation();
+          if (currentGallery.length < 2) return;
+          currentIndex =
+            (currentIndex - 1 + currentGallery.length) % currentGallery.length;
+          showCurrent();
+        };
+        document.getElementById("lb-next").onclick = (e) => {
+          e.stopPropagation();
+          if (currentGallery.length < 2) return;
+          currentIndex = (currentIndex + 1) % currentGallery.length;
+          showCurrent();
+        };
+        document.addEventListener("keydown", (e) => {
+          if (!lightbox.classList.contains("open")) return;
+          if (e.key === "Escape") closeLightbox();
+          if (e.key === "ArrowLeft") document.getElementById("lb-prev").click();
+          if (e.key === "ArrowRight")
+            document.getElementById("lb-next").click();
+        });
+      }
+
+      renderAll();
+
+      // ===== WIRE CLOCK =====
+      (function () {
+        function tick() {
+          var el = document.getElementById('wire-clock');
+          if (!el) return;
+          var n = new Date();
+          var h = String(n.getHours()).padStart(2, '0');
+          var m = String(n.getMinutes()).padStart(2, '0');
+          el.textContent = h + ':' + m;
+        }
+        tick();
+        setInterval(tick, 15000);
+      })();
+    </script>
+    <!-- ===== WIRE HOME BAR ===== -->
+    <div class="wire-home">
+      <div class="wire-home-ind" aria-hidden="true"></div>
+    </div>
+  </body>
+</html>

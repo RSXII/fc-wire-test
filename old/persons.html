@@ -1,0 +1,2159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fate City: 1999 — Persons of Interest</title>
+    <style>
+      :root {
+        --paper: #f3efe6;
+        --paper-dark: #e8e1d2;
+        --ink: #1c1a17;
+        --ink-soft: #4a4540;
+        --gold: #b8902f;
+        --line: #cfc6b0;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #0d1118;
+        font-family: "Georgia", "Times New Roman", serif;
+        color: var(--ink);
+        padding-top: 94px;
+        padding-bottom: 48px;
+        overflow-x: hidden;
+      }
+      /* ===== WIRE CHROME ===== */
+      .wire-once {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+        background: #7c3aed;
+        z-index: 200;
+      }
+      .wire-status {
+        position: fixed;
+        top: 4px; left: 0; right: 0;
+        height: 36px;
+        background: #0c0f16;
+        border-bottom: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        z-index: 200;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+      }
+      .wire-status-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .wire-sig {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 12px;
+      }
+      .wire-sig span {
+        width: 3px;
+        border-radius: 1px;
+        background: #c9a227;
+        display: inline-block;
+      }
+      .wire-skam {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: .8px;
+        color: #c9a227;
+      }
+      .wire-jail {
+        font-size: 8.5px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #e05a3a;
+        border: 1px solid rgba(224,90,58,.4);
+        background: rgba(224,90,58,.08);
+        padding: 2px 5px;
+        border-radius: 2px;
+      }
+      .wire-clock {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 11.5px;
+        color: #6a7d90;
+        letter-spacing: .3px;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+      }
+      .wire-status-right {
+        display: flex;
+        align-items: center;
+      }
+      .wire-batt {
+        width: 20px;
+        height: 11px;
+        border: 1.5px solid #4a5a6a;
+        border-radius: 2px;
+        padding: 1.5px;
+        position: relative;
+      }
+      .wire-batt::after {
+        content: '';
+        position: absolute;
+        right: -4px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        height: 5px;
+        background: #4a5a6a;
+        border-radius: 0 1px 1px 0;
+      }
+      .wire-batt-fill {
+        height: 100%;
+        width: 72%;
+        background: #c9a227;
+        border-radius: 1px;
+      }
+      .wire-header {
+        position: fixed;
+        top: 40px; left: 0; right: 0;
+        height: 50px;
+        background: #0c0f16;
+        border-bottom: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        gap: 12px;
+        z-index: 200;
+        font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+      }
+      .wire-hdr-back {
+        font-size: 22px;
+        color: #c9a227;
+        opacity: .9;
+        user-select: none;
+        text-decoration: none;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+      }
+      .wire-hdr-back:hover { opacity: 1; }
+      .wire-hdr-text { flex: 1; }
+      .wire-hdr-title {
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #e8dfc8;
+        line-height: 1.1;
+      }
+      .wire-hdr-sub {
+        font-size: 9.5px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #3a4a5a;
+        margin-top: 2px;
+      }
+      .wire-hdr-more {
+        font-size: 18px;
+        color: #3a4a5a;
+      }
+      .wire-home {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 32px;
+        background: #0c0f16;
+        border-top: 1px solid #1a2030;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 200;
+      }
+      .wire-home-ind {
+        width: 90px;
+        height: 4px;
+        background: #1e2840;
+        border-radius: 2px;
+      }
+      .section-divider {
+        max-width: 760px;
+        margin: 48px auto 24px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .section-divider.first {
+        margin-top: 28px;
+      }
+      .section-divider::before,
+      .section-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(184, 144, 47, 0.25),
+          transparent
+        );
+      }
+      .section-divider-label {
+        font-family: "Arial", sans-serif;
+        font-size: 13px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: #8a7a3a;
+        white-space: nowrap;
+      }
+
+      .card {
+        max-width: 760px;
+        margin: 0 auto 36px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        box-shadow:
+          0 18px 40px rgba(0, 0, 0, 0.45),
+          0 0 0 1px rgba(0, 0, 0, 0.05) inset;
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.015) 0px,
+          transparent 1px,
+          transparent 2px
+        );
+        pointer-events: none;
+      }
+      .stripe {
+        height: 6px;
+      }
+
+      .dossier-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 28px 0;
+        font-family: "Arial", sans-serif;
+        font-size: 11px;
+        letter-spacing: 1px;
+        color: var(--ink-soft);
+      }
+      .dossier-head .stamp {
+        font-weight: 700;
+        letter-spacing: 1.5px;
+      }
+      .hr {
+        margin: 10px 28px 0;
+        border: none;
+        border-top: 2px solid var(--rule, var(--gold));
+      }
+
+      .name-block {
+        padding: 18px 28px 4px;
+      }
+      .name-block h2 {
+        font-family: "Arial Black", "Arial", sans-serif;
+        font-size: 30px;
+        margin: 0;
+        letter-spacing: 0.5px;
+        color: #191713;
+      }
+      .name-block .epithet {
+        font-style: italic;
+        font-size: 15px;
+        margin: 6px 0 0;
+        color: var(--accent, var(--gold));
+      }
+
+      .gallery {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 28px 6px;
+      }
+      .gallery .thumb {
+        width: 92px;
+        height: 92px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        cursor: pointer;
+        background: #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
+      }
+      .gallery .thumb:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+      }
+      .gallery .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 9, 7, 0.92);
+        z-index: 999;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        cursor: zoom-out;
+      }
+      .lightbox.open {
+        display: flex;
+      }
+      .lightbox img {
+        max-width: 92vw;
+        max-height: 88vh;
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+        border: 1px solid #444;
+        cursor: default;
+      }
+      .lightbox .caption {
+        position: absolute;
+        bottom: 24px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: #cfc6b0;
+        font-family: "Arial", sans-serif;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+      }
+      .lightbox .close-x {
+        position: absolute;
+        top: 18px;
+        right: 26px;
+        color: #cfc6b0;
+        font-family: "Arial", sans-serif;
+        font-size: 28px;
+        cursor: pointer;
+        line-height: 1;
+      }
+      .lightbox .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #cfc6b0;
+        font-family: "Arial", sans-serif;
+        font-size: 36px;
+        cursor: pointer;
+        padding: 10px 16px;
+        user-select: none;
+      }
+      .lightbox .nav-arrow.prev {
+        left: 6px;
+      }
+      .lightbox .nav-arrow.next {
+        right: 6px;
+      }
+
+      .stats {
+        margin: 18px 28px 4px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 10px 0;
+      }
+      .stat-row {
+        display: flex;
+        gap: 14px;
+        padding: 5px 0;
+        font-family: "Arial", sans-serif;
+        font-size: 13px;
+      }
+      .stat-row .label {
+        flex: 0 0 130px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--accent, var(--gold));
+        text-transform: uppercase;
+        font-size: 11.5px;
+      }
+      .stat-row .value {
+        color: #222;
+      }
+
+      .section {
+        padding: 6px 28px 0;
+      }
+      .section h3 {
+        font-family: "Arial", sans-serif;
+        font-size: 13px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #222;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 6px;
+        margin: 20px 0 10px;
+      }
+      .section p {
+        font-size: 15.5px;
+        line-height: 1.65;
+        color: #2a2722;
+        margin: 0 0 12px;
+      }
+      ul.hooks {
+        margin: 0 0 6px;
+        padding-left: 0;
+        list-style: none;
+      }
+      ul.hooks li {
+        font-size: 15px;
+        line-height: 1.55;
+        color: #2a2722;
+        margin: 0 0 9px;
+        padding-left: 20px;
+        position: relative;
+      }
+      ul.hooks li::before {
+        content: "\2013";
+        position: absolute;
+        left: 0;
+        color: var(--accent, var(--gold));
+        font-weight: 700;
+      }
+
+      blockquote {
+        margin: 16px 28px 6px;
+        padding: 6px 0 6px 18px;
+        border-left: 3px solid var(--accent, var(--gold));
+        font-style: italic;
+        font-size: 15px;
+        color: #3a3630;
+      }
+      blockquote .cite {
+        display: block;
+        margin-top: 6px;
+        font-style: normal;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        color: #8a8275;
+        font-family: "Arial", sans-serif;
+        text-transform: uppercase;
+      }
+
+      .footer-pad {
+        height: 24px;
+      }
+
+      .redacted-gate {
+        margin: 4px 28px 18px;
+        padding: 14px 16px;
+        background: #0d0c0a;
+        border: 1px solid #000;
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+      }
+      .redacted-gate input {
+        background: #1a1815;
+        border: 1px solid #3a3630;
+        color: #cfc6b0;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        letter-spacing: 3px;
+        padding: 8px 12px;
+        width: 160px;
+        outline: none;
+      }
+      .redacted-gate input:focus {
+        border-color: #6b6660;
+      }
+      .redacted-gate button {
+        background: #1a1815;
+        border: 1px solid #3a3630;
+        color: #cfc6b0;
+        font-size: 16px;
+        padding: 8px 14px;
+        cursor: pointer;
+      }
+      .redacted-gate button:hover {
+        border-color: #6b6660;
+      }
+      .redacted-gate.shake {
+        animation: redacted-shake 0.4s ease;
+      }
+      @keyframes redacted-shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-6px);
+        }
+        75% {
+          transform: translateX(6px);
+        }
+      }
+      @media (max-width: 600px) {
+        .redacted-gate {
+          margin: 4px 16px 16px;
+          padding: 12px 14px;
+        }
+      }
+
+      .redacted-block {
+        margin: 4px 28px 18px;
+        padding: 16px 18px;
+        background: #0d0c0a;
+        border: 1px solid #000;
+        box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          opacity 0.9s ease,
+          max-height 0.9s ease;
+      }
+      .redacted-block.revealed {
+        opacity: 1;
+        max-height: 2000px;
+      }
+      .redacted-block .redacted-heading {
+        font-family: "Arial", sans-serif;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #c94f4f;
+        margin: 0 0 4px;
+      }
+      .redacted-block .redacted-sub {
+        font-family: "Arial", sans-serif;
+        font-style: italic;
+        font-size: 11px;
+        color: #6b6660;
+        margin: 0 0 14px;
+        line-height: 1.5;
+      }
+      .redacted-block p {
+        font-family: "Courier New", monospace;
+        font-size: 13.5px;
+        line-height: 1.7;
+        color: #cfc6b0;
+        margin: 0 0 12px;
+        letter-spacing: 0.3px;
+      }
+      @media (max-width: 600px) {
+        .redacted-block {
+          margin: 4px 16px 16px;
+          padding: 14px 14px;
+        }
+      }
+
+      @media print {
+        body {
+          background: #fff;
+          padding: 0;
+        }
+        .card {
+          box-shadow: none;
+          page-break-after: always;
+        }
+        .wire-once,
+        .wire-status,
+        .wire-header,
+        .wire-home {
+          display: none !important;
+        }
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding-top: 94px;
+          padding-bottom: 48px;
+          padding-left: 0;
+          padding-right: 0;
+        }
+        .card {
+          max-width: 100%;
+          margin: 0 0 24px;
+        }
+        .name-block h2 {
+          font-size: 24px;
+        }
+        .name-block .epithet {
+          font-size: 15px;
+        }
+        .dossier-head {
+          padding: 12px 16px 0;
+          font-size: 10px;
+        }
+        .hr {
+          margin: 10px 16px 0;
+        }
+        .name-block {
+          padding: 14px 16px 4px;
+        }
+        .gallery {
+          padding: 12px 16px 6px;
+        }
+        .stats {
+          margin: 14px 16px 4px;
+        }
+        .stat-row {
+          flex-direction: column;
+          gap: 2px;
+          font-size: 14px;
+        }
+        .stat-row .label {
+          flex: none;
+          font-size: 11px;
+        }
+        .section {
+          padding: 6px 16px 0;
+        }
+        .section p {
+          font-size: 16.5px;
+          line-height: 1.7;
+        }
+        ul.hooks li {
+          font-size: 16px;
+        }
+        blockquote {
+          margin: 14px 16px 6px;
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== WIRE CHROME ===== -->
+    <div class="wire-once" aria-hidden="true"></div>
+    <div class="wire-status">
+      <div class="wire-status-left">
+        <div class="wire-sig" aria-label="Signal: 4 of 5 bars">
+          <span style="height:4px"></span>
+          <span style="height:6px"></span>
+          <span style="height:9px"></span>
+          <span style="height:11px"></span>
+          <span style="height:12px;opacity:.28"></span>
+        </div>
+        <span class="wire-skam">S.K.AM</span>
+        <span class="wire-jail">JAILBROKEN</span>
+      </div>
+      <span class="wire-clock" id="wire-clock"></span>
+      <div class="wire-status-right">
+        <div class="wire-batt" aria-label="Battery 72%">
+          <div class="wire-batt-fill"></div>
+        </div>
+      </div>
+    </div>
+    <div class="wire-header">
+      <a class="wire-hdr-back" href="home.html" aria-label="Back to home screen">&lsaquo;</a>
+      <div class="wire-hdr-text">
+        <div class="wire-hdr-title">Persons of Interest</div>
+        <div class="wire-hdr-sub">Fate City: 1999 &mdash; Benefactor File</div>
+      </div>
+      <span class="wire-hdr-more" aria-hidden="true">&vellip;</span>
+    </div>
+
+    <div id="cards-root"></div>
+
+    <div class="lightbox" id="lightbox">
+      <span class="close-x" id="lb-close">&times;</span>
+      <span class="nav-arrow prev" id="lb-prev">&#8249;</span>
+      <img id="lb-img" src="" alt="" />
+      <span class="nav-arrow next" id="lb-next">&#8250;</span>
+      <span class="caption" id="lb-caption"></span>
+    </div>
+
+    <!-- ======================================================= -->
+    <!--  EDIT BELOW THIS LINE TO ADD / CHANGE NPCs                -->
+    <!--  Everything above is layout/styling and rarely needs       -->
+    <!--  to be touched. Each object in NPCS below is one dossier.  -->
+    <!-- ======================================================= -->
+    <script>
+      const NPCS = [
+        {
+          id: "city-overview",
+          category: "briefing",
+          fileNo: "CO-000",
+          stamp: "ESSENTIAL BRIEFING — READ FIRST",
+          colors: {
+            rule: "#8a6a1f",
+            accent: "#b8902f",
+            stripe: "#8a6a1f",
+            stampColor: "#b8902f",
+          },
+          name: "FATE CITY",
+          epithet:
+            "Everyone in this city is selling something. The trick is figuring out what \u2014 and what it's actually going to cost you to buy it.",
+          images: ["images/fate_city_logo.png"],
+          stats: [
+            { label: "Currency", value: "Platinum (\u201cplat\u201d)" },
+            { label: "Districts", value: "Nineteen, and growing" },
+            {
+              label: "Tech Level",
+              value: "Modern-adjacent \u2014 Weave-fused, not chrome",
+            },
+            { label: "Population", value: "Dense, mixed, never fully counted" },
+            { label: "Defining Trait", value: "Everything has a price" },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Fate City sprawls across nineteen districts of glass towers, corporate logos, and street-level grit the glass towers would rather you not look at too closely. It runs modern \u2014 Wires in every pocket, plat in every transaction, traffic that never quite stops \u2014 filtered through Weave-tech instead of chrome: magitech grafted in close enough to skin that most of the city stopped noticing the seam years ago.",
+                "Dryads, elves, fairies, tieflings, and every other shape a person can apparently come in walk these streets doing the same ordinary, exhausted things everyone else does \u2014 which either means the city's population is far stranger than it looks, or far more ordinary than it advertises. Both readings have their believers.",
+                "Two paths officially exist for anyone who can do something the rest of the city can't: register with the Agency, or don't and hope nobody notices. Nocturnal quietly built a third option out of that gap. None of the three are advertised as a choice anyone should feel good about making.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "The Wire in your pocket is the only thing standing between you and S.K.AM's network logging your location by default. Don't lose it, and don't hand it to anyone who'd know how to look inside it.",
+                "Plat moves everything here, including conversations. If a door isn't opening, you're either talking to the wrong person or not offering enough of it.",
+                "You'll meet plenty of names in this file before you meet them in person. Start wherever the work takes you \u2014 the city has more interest in all of you than you'll have time to return.",
+                "The Agency doesn't patrol so much as it notices. Staying off its radar is mostly about staying boring, right up until you can't afford to be.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Everybody's got an angle in this city. The smart ones just never tell you what it costs until you're already in the room.",
+            cite: "Overheard, Fate City Radio call-in segment",
+          },
+        },
+
+        {
+          id: "bloomwork",
+          category: "briefing",
+          fileNo: "BW-015",
+          stamp: "CULTURAL INTELLIGENCE — TRENDING",
+          colors: {
+            rule: "#7a2048",
+            accent: "#c9527a",
+            stripe: "#7a2048",
+            stampColor: "#c9527a",
+          },
+          name: "&ldquo;BLOOMWORK&rdquo;",
+          epithet:
+            "Antlers, wings, horns, fins, bark for skin \u2014 half the city's wearing something it wasn't born with, and the other half stopped asking which half is which.",
+          images: ["images/fantac_magazine.png"],
+          stats: [
+            { label: "Status", value: "Citywide, and still climbing" },
+            {
+              label: "Cost",
+              value: "Plat up front; Seam-essence under the hood",
+            },
+            { label: "Fray Cost", value: "None \u2014 purely cosmetic" },
+            {
+              label: "Market Leaders",
+              value:
+                "S.K.AM Technologies (consumer); Galv\u00e8re (couture); a dozen budget storefronts (everything else)",
+            },
+            {
+              label: "Social Read",
+              value: "Normal to ask about. Not always normal to be asked back.",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Call it Bloomwork, call it getting Woven, call it whatever the boutique on the corner is branding it this season \u2014 the city's single biggest beauty trend right now is buying the look of a race you weren't born into. Antlers, fey ears, a tail, bark-grain skin, real feathers instead of a feather motif: all of it achievable in an afternoon chair, all of it pure Weave-fused cosmetic work, and none of it changes a single thing about what's actually underneath. No Fray cost, no Humanity on the line \u2014 just plat for the procedure and a draw on the city's already-finite Seam-essence supply, the same resource that keeps the lights on in half the magitech in this town.",
+                "S.K.AM Technologies runs the largest consumer line \u2014 glossy, mid-market, advertised on every surface a Wire can render an ad onto. Above that sits actual couture: Galv\u00e8re-sponsored work that costs what a car costs and reads like it the moment you walk into a room. Below it sits a dozen storefronts doing the same procedure for a fraction of the price, on equipment that's a generation behind and occasionally shows it.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "It's a completely normal question in this city to ask whether someone's look is natural or bought. Nobody considers it rude. They might consider you naive for assuming it's the former.",
+                "None of this touches Fray. Whatever you choose to look like, your humanity isn't the currency being spent \u2014 your wallet and the city's Seam supply are.",
+                "A couture job and a budget job can produce the exact same antlers. They do not produce the exact same room when you walk into one wearing it.",
+                "Every so often, somebody's look turns out to be real instead of bought. Nobody ever expects it \u2014 which is exactly why it keeps working.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Why be born when you can be designed?",
+            cite: "S.K.AM Technologies ad campaign, citywide Wire placement",
+          },
+        },
+
+        {
+          id: "casven",
+          category: "person",
+          fileNo: "CE-001",
+          stamp: "PUBLIC RECORD — POLITICAL",
+          colors: {
+            rule: "#1f6fb2",
+            accent: "#1f6fb2",
+            stripe: "#1f6fb2",
+            stampColor: "#1f6fb2",
+          },
+          name: "GOVERNOR CASVEN ELM",
+          epithet:
+            "&ldquo;Every vote has a price. I just happen to know everyone&rsquo;s.&rdquo;",
+          images: [
+            "images/casven_profile.png",
+            "images/casven_01.png",
+            "images/casven_02.png",
+            "images/casven_03.png",
+            "images/casven_04.png",
+            "images/casven_05.png",
+            "images/casven_06.png",
+          ],
+          stats: [
+            { label: "Species", value: "Human" },
+            { label: "Role", value: "Governor of Fate City" },
+            {
+              label: "Affiliation",
+              value:
+                "Office of the Governor (officially); ties to Nocturnal (alleged)",
+            },
+            { label: "Known For", value: "Wealth / Influence" },
+            {
+              label: "Reputation",
+              value: "Political — moves the board, doesn't fight on it",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Casven Elm is the Governor of Fate City — warm, well-liked, and somehow untouched by a scandal that should have ended his career before it started. He doesn't make threats or demands. He extends invitations, and declining one always seems to cost more than accepting ever would.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "He doesn't seek people out — he notices them. Get seen somewhere useful, ideally on camera, and an invitation tends to follow.",
+                "He can make a stack of paperwork disappear for the right price or favor — but he keeps a ledger in his head of who asked, and why. Spend that currency carefully.",
+                "Being photographed with Elm cuts two ways. It can be the best exposure you'll ever get, or a leash you put on yourselves. He'll let you decide which it looks like, then quietly decide which it actually is.",
+                "He has no reason to know you exist yet. If you're ever somewhere useful to him — and photographed there — expect an invitation. Think carefully before declining one.",
+              ],
+            },
+          ],
+          quote: {
+            text: "I don't do favors. I do investments. The return is just rarely cash.",
+            cite: "Gov. Casven Elm, fundraiser remarks (off the record, somehow on the record anyway)",
+          },
+        },
+
+        {
+          id: "elarthis",
+          category: "person",
+          fileNo: "EL-002",
+          stamp: "TABLOID / ENTERTAINMENT — UNVERIFIED",
+          colors: {
+            rule: "#8c3a5d",
+            accent: "#8c3a5d",
+            stripe: "#8c3a5d",
+            stampColor: "#8c3a5d",
+          },
+          name: "ELARTHIS L\u00d6FGREN",
+          epithet:
+            "The most beautiful woman in Fate City has never once taken the safe route home — and never once gotten to choose the rest of it.",
+          images: [
+            "images/elarthis_profile.png",
+            "images/elarthis_01.jpg",
+            "images/elarthis_02.png",
+            "images/elarthis_03.png",
+            "images/elarthis_04.png",
+            "images/elarthis_05.png",
+            "images/elarthis_06.png",
+          ],
+          stats: [
+            { label: "Species", value: "Dryad" },
+            { label: "Role", value: "Actress" },
+            {
+              label: "Affiliation",
+              value: "None formal — managed, scheduled, and watched",
+            },
+            { label: "Known For", value: "Fame" },
+            {
+              label: "Reputation",
+              value:
+                "Low combat / High chaos — she creates situations, not violence",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Elarthis L\u00f6fgren is Fate City's biggest movie star — gorgeous, famous, and far less in control of her own life than the magazines let on. She free-climbs hotel fa\u00e7ades for fun, drags paparazzi wherever she goes, and is regularly seen on Governor Casven Elm's arm in an arrangement nobody discusses honestly.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "She'll ask to come along to anything that looks dangerous or interesting. She'll ask again if you say no.",
+                "Showing up somewhere reckless with Elarthis in the car is a fast windfall of fame — and a magnet for exactly the kind of attention you don't want. Weigh that before you let her in.",
+                "Paparazzi follow her everywhere, which means they follow whatever she's standing next to. Plan accordingly.",
+                "She has real star power to trade — a public endorsement, a leaked photo, an introduction you couldn't otherwise reach. Worth cultivating if you can stand the attention.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Everyone keeps asking if I'm trying to get myself killed. I'm trying to find out if I can still feel anything before I do.",
+            cite: "Elarthis L\u00f6fgren, late-night radio interview",
+          },
+        },
+
+        {
+          id: "solenne",
+          category: "person",
+          fileNo: "SG-003",
+          stamp: "CORPORATE / FASHION — PUBLIC",
+          colors: {
+            rule: "#5b1a1a",
+            accent: "#8c2e2e",
+            stripe: "#5b1a1a",
+            stampColor: "#8c2e2e",
+          },
+          name: "SOLENNE GALV\u00c8RE",
+          epithet:
+            "&ldquo;I didn't get here by being patient with people who waste my time. I got here by not having any.&rdquo;",
+          images: [
+            "images/solenne_profile.png",
+            "images/solenne_01.jpg",
+            "images/solenne_02.png",
+            "images/solenne_03.png",
+            "images/solenne_04.png",
+            "images/solenne_05.png",
+          ],
+          stats: [
+            { label: "Species", value: "Human" },
+            { label: "Age", value: "31" },
+            {
+              label: "Role",
+              value: "CEO, Galv\u00e8re (formerly Maison Galv\u00e8re)",
+            },
+            {
+              label: "Affiliation",
+              value: "Galv\u00e8re (fashion house / model agency)",
+            },
+            { label: "Known For", value: "Wealth" },
+            {
+              label: "Reputation",
+              value:
+                "Economic — she can make or break a reputation with one phone call",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Solenne Galv\u00e8re inherited Maison Galv\u00e8re, the old-money fashion house her family ran for two generations, and rebuilt it into something leaner, colder, and entirely her own. She's brilliant and ruthless, with no patience left over for anyone who isn't useful to her — and she refuses, almost obsessively, to ever conduct a first meeting with a new face alone. Nobody on her legal team has ever been told why.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "She won't care who you are until you're useful to her — at which point she'll move fast, and expect you to move faster.",
+                "A sponsorship, an exclusive shoot, or a Galv\u00e8re-branded car wrap is a real foothold in the money world. It also comes with real strings — read whatever she puts in front of you twice.",
+                "She'll turn anything unusual into a marketing angle if it photographs well, including you. Decide in advance how much of yourselves you're willing to let her sell.",
+                "Wasting her time is the one unforgivable sin. Show up late, vague, or unprepared and you won't get a second meeting.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Tell me what it's worth or get out of my office. I have eleven minutes and you've used four of them.",
+            cite: "Solenne Galv\u00e8re, attributed by a former Galv\u00e8re intern",
+          },
+        },
+
+        {
+          id: "meros",
+          category: "person",
+          fileNo: "MZ-004",
+          stamp: "AGENCY INTELLIGENCE — RESTRICTED",
+          colors: {
+            rule: "#2e1a47",
+            accent: "#7a4fc9",
+            stripe: "#2e1a47",
+            stampColor: "#7a4fc9",
+          },
+          name: "MEROS ZARZER",
+          epithet:
+            "The city's two licensed paths to power both answer to someone. Nocturnal answers to no one but Meros.",
+          images: [
+            "images/meros_profile.png",
+            "images/meros_02.png",
+            "images/meros_03.png",
+            "images/meros_04.png",
+            "images/meros_05.png",
+            "images/meros_06.png",
+          ],
+          stats: [
+            { label: "Species", value: "Tiefling" },
+            { label: "Role", value: "Head of Nocturnal" },
+            {
+              label: "Affiliation",
+              value: "Nocturnal — nightclubs, and considerably more than that",
+            },
+            { label: "Known For", value: "The Underworld" },
+            {
+              label: "Reputation",
+              value: "High — controls territory, muscle, and information",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Meros Zarzer runs Nocturnal — the city's unofficial third path for the unlicensed and unregistered, built on protection and loyalty instead of mercy. He's never once bothered denying what he is, which makes him oddly easier to read than most of the city's other power players.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "He's the obvious answer to where unlicensed power-havers turn for protection. Obvious doesn't mean wrong — just know what you're trading away before you take him up on it.",
+                "Working a job for Nocturnal builds an underworld reputation fast. It also ties you to an organization the Agency treats as a confirmed hostile the moment it notices the connection.",
+                "He doesn't forget debts in either direction. A favor done for him is banked. A favor he owes gets collected eventually, on his timeline — never yours.",
+                "If you ever see him send a loud message to someone else, read it as a warning meant for you too. The pattern never changes — by the time it's your turn for a quiet one, you've already missed the chance to fix it.",
+              ],
+            },
+          ],
+          quote: {
+            text: "The Agency thinks they invented control. The cops think they invented order. I just never bothered pretending it was anything but a deal.",
+            cite: "Meros Zarzer, overheard at Nocturne (source: a bartender who didn't want their name used)",
+          },
+        },
+        {
+          id: "nocturne",
+          category: "organization",
+          fileNo: "NV-009",
+          stamp: "NIGHTLIFE — PUBLIC FRONT / UNDERWORLD INTEREST",
+          colors: {
+            rule: "#2a1730",
+            accent: "#c9a227",
+            stripe: "#2a1730",
+            stampColor: "#c9a227",
+          },
+          name: "NOCTURNE",
+          epithet:
+            "The only door in Fate City where the price of admission is never posted &mdash; and never negotiable.",
+          images: ["images/nocturne_profile.png"],
+          stats: [
+            { label: "Species", value: "N/A — venue" },
+            { label: "Role", value: "Flagship nightclub" },
+            { label: "Affiliation", value: "Nocturnal (Meros Zarzer)" },
+            { label: "Known For", value: "Glamour / Discretion" },
+            {
+              label: "Reputation",
+              value:
+                "Velvet-rope exclusivity — what happens here doesn't leave here",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Nocturne is Meros Zarzer's flagship club — gold trim, velvet rope, and a reputation as the best night out money can buy in Fate City. Past a second, unmarked door is the part of the business that actually matters: total discretion, for a price, for clients who can't afford to be seen wanting what they want.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Getting past the velvet rope is easy if you've got money or fame. Getting past the second door is a different problem — nobody applies, you just have to be noticed.",
+                "Whatever happens past that second door stays there. That guarantee is the actual product, more than anything on the menu.",
+                "Trace gets sold past that door, and nobody serving it answers questions about where it comes from. Buying it puts you on the same kind of radar an actual unregistered power-user would be on.",
+                "Most regulars past the second door would swear they don't owe Meros anything. They're wrong, every time.",
+              ],
+            },
+          ],
+          quote: {
+            text: "You don't get carded at Nocturne. You get evaluated.",
+            cite: "Overheard remark, attributed to a regular who declined to give a name",
+          },
+        },
+
+        {
+          id: "simbelle",
+          category: "person",
+          fileNo: "SB-005",
+          stamp: "ENTERTAINMENT / TABLOID — UNVERIFIED",
+          colors: {
+            rule: "#1a6e6e",
+            accent: "#1a6e6e",
+            stripe: "#1a6e6e",
+            stampColor: "#1a6e6e",
+          },
+          name: "SIM-BELLE",
+          epithet:
+            "Pop's brightest new &ldquo;bad girl&rdquo;, and the night life of Fate City is more than happy to oblige her.",
+          images: [
+            "images/simbelle_profile.png",
+            "images/simbelle_01.png",
+            "images/simbelle_02.png",
+            "images/simbelle_03.png",
+            "images/simbelle_04.png",
+            "images/simbelle_05.png",
+            "images/simbelle_06.png",
+          ],
+          stats: [
+            { label: "Species", value: "Fairy" },
+            { label: "Role", value: "Pop singer" },
+            {
+              label: "Affiliation",
+              value:
+                "Independent — signed to a label, loyal mostly to her own brand",
+            },
+            { label: "Known For", value: "Fame" },
+            {
+              label: "Reputation",
+              value:
+                "Low combat / High volatility — image-driven, easily provoked",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Sim-Belle is pop's brightest new name and Fate City's favorite headline &mdash; chart-topping, reckless, and exactly as dangerous off camera as the persona promises. She's plugged into the city's nightlife more than anyone in her position should be, with one foot in the street racing scene and at least one arrest that quietly disappeared overnight. Exciting to be around. Hard to predict. Harder to walk away from once she's decided you're interesting.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "She's easiest to find at Nocturne on nights she isn't working a crowd somewhere else — but getting in the door at all might be your first hurdle.",
+                "She's everywhere in this city's nightlife and almost impossible to pin down on purpose. Plan on running into her before you plan on meeting her.",
+                "She decides whether you're worth her time in about the first five minutes. Bring something interesting, or don't bother.",
+                "The moment she's seen with you, you're news. That cuts both ways, and she won't be the one managing which way it cuts.",
+              ],
+            },
+          ],
+          quote: {
+            text: "I don't chase trouble. Trouble in this city just happens to have excellent taste.",
+            cite: "Sim-Belle, magazine profile",
+          },
+        },
+
+        {
+          id: "durn",
+          category: "person",
+          fileNo: "DT-011",
+          stamp: "STREET INTELLIGENCE — UNDERWORLD",
+          colors: {
+            rule: "#3a1414",
+            accent: "#c9512f",
+            stripe: "#3a1414",
+            stampColor: "#c9512f",
+          },
+          name: "DURN THALGOR",
+          epithet:
+            "He has never once lost an argument by talking. He has also never once tried.",
+          images: ["images/durn_profile.png"],
+          stats: [
+            { label: "Species", value: "Human" },
+            { label: "Role", value: "Co-Founder, Night Crows" },
+            { label: "Affiliation", value: "Night Crows (co-lead)" },
+            { label: "Known For", value: "Street Cred" },
+            {
+              label: "Reputation",
+              value:
+                "Immovable — settles disputes behind a wheel, not at a table",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Durn Thalgor doesn't explain himself — he settles things behind a wheel instead. Co-founder of the Night Crows alongside Tivy Glintspark, he's blunt, immovable, and loyal past the point of being asked to be. Anyone with a grievance against the crew gets the same offer: get in a car.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Durn settles disputes with races, not negotiations. Anyone who wants something from him — or from the crew, through him — should expect to be asked to prove it behind a wheel.",
+                "He trusts Tivy's read on people and money completely, and doesn't second-guess her in front of anyone. If you need to get past him, going through her first is usually faster.",
+                "He's not interested in why you want in. He's only interested in whether you can drive. Don't waste his time with the former when he's only ever asking for the latter.",
+                "If you ever beat him clean, in a fair race, expect that to mean more to him — and to the crew — than anything you could have said to earn the same respect.",
+              ],
+            },
+          ],
+          quote: {
+            text: "We don't race for the title. There isn't one. We race because somebody has to be the fastest thing in this city that doesn't answer to a badge.",
+            cite: "Durn Thalgor, pit lane interview (never aired)",
+          },
+        },
+
+        {
+          id: "tivy",
+          category: "person",
+          fileNo: "TG-012",
+          stamp: "STREET INTELLIGENCE — TRUSTED CONTACT",
+          colors: {
+            rule: "#3a1414",
+            accent: "#9a7fd9",
+            stripe: "#3a1414",
+            stampColor: "#9a7fd9",
+          },
+          name: "TIVY GLINTSPARK",
+          epithet:
+            "She's never once sent you an invoice. That's not the same thing as free.",
+          images: ["images/tivy_profile.png", "images/tivy_01.png"],
+          stats: [
+            { label: "Species", value: "Human" },
+            {
+              label: "Role",
+              value: "Co-Founder, Night Crows / Independent Fixer",
+            },
+            {
+              label: "Affiliation",
+              value:
+                "Night Crows (co-lead); independent otherwise — no registered ties",
+            },
+            { label: "Known For", value: "Trust" },
+            {
+              label: "Reputation",
+              value:
+                "Quiet leverage — never collects loud, and never forgets either",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Tivy Glintspark is the other half of the Night Crows — the one who reads a room before anyone's finished parking. She doesn't deal in plat; she deals in favors and trust, with no ledger anyone's ever seen and no due date attached to anything. People walk away from a first conversation with her feeling like they made a friend, not a deal.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "She's the softest on-ramp into Fate City's information economy you'll find — which makes her the obvious first call, not necessarily the safest one.",
+                "Her favors don't expire and don't come itemized. The day she remembers one is never a day you'll see coming — that's the trade for never seeing a bill in the first place.",
+                "She's never once threatened anyone the way Meros does. That's not mercy. It just means whatever she eventually wants back, she'll get without ever having to ask twice.",
+                "If you ever need to get past Durn quickly, going through Tivy first is usually faster than arguing with him directly. He doesn't second-guess her in front of anyone.",
+              ],
+            },
+          ],
+          quote: {
+            text: "You don't owe me plat. You owe me a phone call, someday, whenever I decide to make it.",
+            cite: "Tivy Glintspark, overheard at the track",
+          },
+        },
+
+        {
+          id: "nightcrows",
+          category: "organization",
+          fileNo: "NC-006",
+          stamp: "STREET INTELLIGENCE — UNDERWORLD",
+          colors: {
+            rule: "#3a1414",
+            accent: "#a13c3c",
+            stripe: "#3a1414",
+            stampColor: "#a13c3c",
+          },
+          name: "NIGHT CROWS",
+          epithet:
+            "They don't own the road. They just make sure nobody forgets who put the lights out on it.",
+          images: ["images/nightcrows_profile.png"],
+          stats: [
+            { label: "Species", value: "N/A — organization" },
+            { label: "Role", value: "Street racing crew" },
+            {
+              label: "Affiliation",
+              value: "Independent — funded accidentally by S.K.AM Technologies",
+            },
+            { label: "Known For", value: "Street Cred" },
+            {
+              label: "Reputation",
+              value: "Territorial — owns the night, not the daylight economy",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "The Night Crows are Fate City's premier street racing crew, run jointly by <strong>Durn Thalgor</strong> and <strong>Tivy Glintspark</strong> out of a renovated track that, officially, nobody paid for. They don't recruit — people find their way in, prove themselves on asphalt, or don't come back.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "A standing invitation to race for the crew's approval is the fastest way into Fate City's underworld reputation economy. It's also the fastest way to get noticed by people watching the Crows for other reasons.",
+                "Sim-Belle has a car in their pit lane that nobody outside the crew is supposed to know about. That secret is only as safe as the people who keep finding out about it.",
+                "If Vel's name ever becomes a liability, the Crows inherit that liability whether they want it or not. Worth knowing before you tie your name to theirs.",
+              ],
+            },
+          ],
+          quote: {
+            text: "You don't join the Crows. You just stop losing to them long enough that they stop noticing the difference.",
+            cite: "Unconfirmed pit-lane rumor",
+          },
+        },
+
+        {
+          id: "laurent",
+          category: "person",
+          fileNo: "LV-007",
+          stamp: "CORPORATE / MILITARY — RESTRICTED",
+          colors: {
+            rule: "#0d2b3a",
+            accent: "#2f7fa6",
+            stripe: "#0d2b3a",
+            stampColor: "#2f7fa6",
+          },
+          name: "LAURENT VIREL",
+          epithet:
+            "&ldquo;Power isn&rsquo;t given. It&rsquo;s engineered.&rdquo;",
+          images: [
+            "images/laurent_profile.png",
+            "images/laurent_01.png",
+            "images/laurent_02.png",
+            "images/laurent_03.png",
+            "images/laurent_04.png",
+            "images/therese_profile.png",
+          ],
+          stats: [
+            { label: "Species", value: "High Elf (327)" },
+            {
+              label: "Role",
+              value: "Founder & CEO, S.K.AM Advanced Magitechnologies",
+            },
+            {
+              label: "Affiliation",
+              value:
+                "S.K.AM Advanced Magitechnologies (military magitech contractor)",
+            },
+            { label: "Known For", value: "Wealth / Military Influence" },
+            {
+              label: "Reputation",
+              value: "Boardroom power — moves contracts, not crowds",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Laurent Virel founded and runs S.K.AM Advanced Magitechnologies — the military magitech contractor whose infrastructure deals run through half the city's permits, and whose other deals run through rooms nobody official ever sees. Three hundred and twenty-seven years old and utterly unhurried, he doesn't raise his voice because he's never needed to.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "S.K.AM's military magitech contracts almost certainly fund equipment used against unregistered power-users somewhere in this city. To Laurent that's business, not betrayal — keep that distinction in mind if you ever sit across from him.",
+                "Therese is the far more approachable Virel. If you ever need to reach Laurent without walking into a boardroom, start with her instead.",
+                "Laurent's real currency isn't cash, it's patience and information. A favor owed to him is rarely called in quickly, and never called in cheaply. Don't take one lightly.",
+                "He doesn't know you exist yet. If Vel's spending on your behalf ever surfaces on a balance sheet Laurent actually reads, that changes immediately — and not in your favor.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Power isn't given. It's engineered.",
+            cite: "Laurent Virel, S.K.AM Advanced Magitechnologies shareholder address",
+          },
+        },
+        {
+          id: "patch",
+          category: "person",
+          fileNo: "PT-010",
+          stamp: "UNREGISTERED — NO AGENCY FILE",
+          colors: {
+            rule: "#1a3a1a",
+            accent: "#4caf50",
+            stripe: "#1a3a1a",
+            stampColor: "#4caf50",
+          },
+          name: "\u201cPATCH\u201d",
+          epithet:
+            "Everyone important enough to be in this file has a price that requires a meeting. Patch just quotes you a number, stays in his chair, and gets to work.",
+          images: ["images/patch_profile.png"],
+          stats: [
+            { label: "Species", value: "Human" },
+            { label: "Age", value: "19" },
+            {
+              label: "Role",
+              value:
+                "Repair tech (part-time) / unregistered information broker",
+            },
+            {
+              label: "Affiliation",
+              value: "None \u2014 independent, no registered ties",
+            },
+            { label: "Known For", value: "Word of mouth only" },
+            {
+              label: "Reputation",
+              value:
+                "Low profile / High utility \u2014 too friendly to register as a threat, which is exactly why nobody sees him coming",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Patch is a nineteen-year-old repair tech and unregistered information broker — the fastest, cheapest, most reliable way to disappear from a database if you ever need to. He's not registered with anyone, doesn't carry a weapon, and isn't the slightest bit dangerous by any measure the Agency or Nocturnal would recognize. He's also one of the only people in the city who isn't trying to make you owe him something.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "He's the only contact in this file who isn't trying to make you owe him something. That alone should tell you how rare that actually is in this city.",
+                "His prices are fair, but his work is exactly as good as what you pay for. Don't expect Nocturnal-tier results on a takeout budget.",
+                "He won't ask why you need any of it, which also means he won't warn you if what you're doing is about to get you in real trouble. That's the trade.",
+                "Don't expect him to come with you anywhere dangerous. That's not what he's for, and asking will only make him anxious on your behalf instead of useful.",
+              ],
+            },
+          ],
+          quote: {
+            text: "20 plat, twenty minutes, easy. Way safer than whatever you're about to go do \u2014 but hey, you didn't ask me.",
+            cite: "Patch, first meeting, verbatim (allegedly)",
+          },
+        },
+
+        {
+          id: "enforcer",
+          category: "person",
+          fileNo: "SE-008",
+          stamp: "LAW ENFORCEMENT — CLASSIFIED IDENTITY",
+          colors: {
+            rule: "#3a3a3a",
+            accent: "#c94f4f",
+            stripe: "#3a3a3a",
+            stampColor: "#c94f4f",
+          },
+          name: "&ldquo;STREET ENFORCER&rdquo;",
+          epithet:
+            "&ldquo;I am not the law. I am the consequence of breaking it.&rdquo;",
+          images: ["images/street_enforcer_profile.png"],
+          stats: [
+            { label: "Species", value: "Unknown — never confirmed" },
+            { label: "Role", value: "Judge, jury, executioner" },
+            { label: "Affiliation", value: "None — independent operative" },
+            { label: "Known For", value: "Fear / Authority" },
+            {
+              label: "Reputation",
+              value: "Apex pursuit — has never failed to close a chase",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Nobody has ever seen the Street Enforcer's face or confirmed who — or what — is inside the helmet. Matte tactical armor, a live threat-analysis HUD, and an S.K.AM-built anti-magic sidearm called the Swerve make him the most reliable escalation point in the city once you start drawing the wrong kind of attention.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "He's the most reliable escalation point you'll run into once you start drawing the wrong kind of attention on the street. He doesn't wait for an invitation — he just shows up.",
+                "His weapon is built to neutralize magic specifically, not just people. If any of you ever lean on power that's still active, he's one of the few mundane threats who can actually hurt you for it.",
+                "Beating him in a straight chase, even once, would become underworld legend overnight — and would get your name on a very different kind of file. Decide if that's a trade worth making.",
+                "Nobody has ever successfully tailed him back to wherever he goes when the pursuit ends. If you manage it, you'll know more than anyone else in this city does.",
+              ],
+            },
+          ],
+          quote: {
+            text: "I am not the law. I am the consequence of breaking it.",
+            cite: "Attributed to the Street Enforcer, Fate City PD incident dossier",
+          },
+        },
+
+        {
+          id: "saint",
+          category: "person",
+          fileNo: "ST-014",
+          stamp: "CORPORATE / MEDICAL — FIELD CONTACT",
+          colors: {
+            rule: "#6b0f14",
+            accent: "#d98c3f",
+            stripe: "#6b0f14",
+            stampColor: "#d98c3f",
+          },
+          name: "&ldquo;SAINT&rdquo;",
+          epithet:
+            "Trauma Team's contracts decide who lives. Saint is the only variable in that equation they haven't figured out how to price yet.",
+          images: [
+            "images/saint_profile.png",
+            "images/saint_01.png",
+            "images/saint_02.png",
+          ],
+          stats: [
+            { label: "Species", value: "Human" },
+            { label: "Role", value: "Field Medic, Trauma Team International" },
+            {
+              label: "Affiliation",
+              value: "Trauma Team International (strike-team medic)",
+            },
+            { label: "Known For", value: "Mercy" },
+            {
+              label: "Reputation",
+              value:
+                "Selectively merciful — bends triage when he can get away with it, and only when he can",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Behind the callsign &ldquo;Saint&rdquo; is Heath Williams, a Trauma Team International field medic who once broke protocol to save an uncontracted patient and got away with it. It earned him a flagged personnel file — and a quiet reputation as the one person in the company willing to bend triage when he thinks he can get away with it again.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Without a valid contract, the company's answer is a clean, polite no while the response craft idles overhead. Saint is the one variable that answer doesn't always hold for — but he has to actually be the one who shows up.",
+                "He'll never promise a scan's results stay buried. The most he's ever offered anyone is a slower report filed late, not a missing one. Don't ask him for more than that.",
+                "Getting on his good side personally is worth more than getting on Trauma Team's. The company doesn't grant favors. He does, on his own time and at his own risk.",
+                "His personnel file already has one flag on it. He knows exactly what a second one costs him, and he still hasn't decided that's a reason to stop.",
+              ],
+            },
+          ],
+          quote: {
+            text: "I didn't take this job to watch people die by tier. I took it because somebody in this uniform has to be the one who hesitates.",
+            cite: "&ldquo;Saint,&rdquo; unconfirmed strike-comms chatter",
+          },
+        },
+
+        {
+          id: "agency",
+          category: "organization",
+          fileNo: "AG-000",
+          stamp: "CLASSIFIED — DO NOT DISTRIBUTE",
+          colors: {
+            rule: "#1a1a1a",
+            accent: "#6b6b6b",
+            stripe: "#1a1a1a",
+            stampColor: "#6b6b6b",
+          },
+          name: "THE AGENCY",
+          epithet:
+            "No public name. No public face. No public budget. It is the only thing in Fate City that doesn't need to advertise its price.",
+          images: ["images/agency_profile.png"],
+          stats: [
+            { label: "Species", value: "N/A — organization" },
+            { label: "Role", value: "Federal supernatural registration body" },
+            {
+              label: "Affiliation",
+              value: "Government — exact branch unconfirmed",
+            },
+            { label: "Known For", value: "Fear / State Power" },
+            {
+              label: "Reputation",
+              value: "Total — doesn't need to be seen to be felt",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "The Agency has no building, no spokesperson, and no name anyone's ever confirmed in print — just absolute jurisdiction over every scrap of magic left in Fate City. Officially it registers and monitors power-users for public safety. Unofficially, registration and disappearance have a way of looking identical from the outside.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "The Agency has no face on file yet, as far as I know. The first time you meet a real operative, that meeting will likely define how the whole organization feels to you from then on. Choose carefully how that first encounter goes.",
+                "Crossing the Agency's threshold of suspicion escalates faster and more permanently than ordinary trouble with the police. There's no known way to simply wait it out once you're on their radar.",
+                "Whatever relationship Governor Elm or Laurent Virel have with the Agency has never been confirmed, but neither man has ever publicly criticized it. Draw your own conclusions, carefully.",
+              ],
+            },
+          ],
+          quote: {
+            text: "We don't have a comment, because we don't have a name, and you don't have a need to know either.",
+            cite: "Unconfirmed Agency statement, leaked internal memo",
+          },
+        },
+
+        {
+          id: "traumateam",
+          category: "organization",
+          fileNo: "TT-013",
+          stamp: "CORPORATE / MEDICAL — RESTRICTED",
+          colors: {
+            rule: "#6b0f14",
+            accent: "#d4453d",
+            stripe: "#6b0f14",
+            stampColor: "#d4453d",
+          },
+          name: "TRAUMA TEAM INTERNATIONAL",
+          epithet:
+            "Everyone in this city eventually has the same medical emergency. The only thing that changes is which tier they bought.",
+          images: ["images/traumateam_profile.png"],
+          stats: [
+            { label: "Species", value: "N/A — organization" },
+            {
+              label: "Role",
+              value:
+                "Private emergency medical / paramilitary response corporation",
+            },
+            {
+              label: "Affiliation",
+              value:
+                "Independent multinational corporate entity — operates under a negotiated city airspace contract",
+            },
+            { label: "Known For", value: "Wealth / Reliability" },
+            {
+              label: "Reputation",
+              value:
+                "Absolute, for a price — the most effective force in the city, available exactly as far as your contract extends",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Trauma Team International is the private emergency response corporation everyone in Fate City already knows the pitch for: armored response craft, strike teams that never lose, and patients walking out alive who shouldn't be — for exactly as far as their contract extends. They're the most honest organization in this file about what they will and won't do for you, which is its own kind of cruelty.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Without a current, valid contract, the answer you get is a confirmed no, delivered politely, while the response craft idles overhead for someone else. Whatever's keeping any of you covered is worth keeping current.",
+                "Strike teams will fight straight through hostiles to extract a contracted patient and won't lift a finger for anyone standing next to them who isn't on the manifest. Don't expect chivalry from the uniform.",
+                "A Platinum or Corporate-tier contract is a genuine asset if anyone in the crew can land one &mdash; and a genuine liability the moment someone asks how a street-level operator is affording it.",
+                "There's exactly one name inside this organization worth knowing personally instead of just contractually. Worth finding out who that is before you ever need them.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Patient confirmed Basic tier. Negative authorization for engagement. Returning to standby.",
+            cite: "Leaked Trauma Team dispatch audio (unconfirmed)",
+          },
+        },
+        {
+          id: "galvere",
+          category: "organization",
+          fileNo: "GV-015",
+          stamp: "CORPORATE / FASHION — PUBLIC",
+          colors: {
+            rule: "#5b1a1a",
+            accent: "#8c2e2e",
+            stripe: "#5b1a1a",
+            stampColor: "#8c2e2e",
+          },
+          name: "GALV\u00c8RE",
+          epithet:
+            "Every face that's ever fronted a Galv\u00e8re campaign got there by being useful. Not many of them get told when they stop being.",
+          images: ["images/galvere_profile.png"],
+          stats: [
+            { label: "Species", value: "N/A — organization" },
+            { label: "Role", value: "Fashion house / model agency" },
+            {
+              label: "Affiliation",
+              value:
+                "Independent — Solenne Galv\u00e8re, CEO (formerly Maison Galv\u00e8re)",
+            },
+            { label: "Known For", value: "Wealth / Image" },
+            {
+              label: "Reputation",
+              value:
+                "Ruthlessly commercial — turns anything into content if it sells, discards what doesn't",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Galv\u00e8re is the fashion house and model agency that dropped its own family name and came out leaner for it. What used to be Maison Galv\u00e8re &mdash; old money, two careful generations &mdash; is now just Galv\u00e8re: faster, colder, and entirely Solenne's. It still produces the glossiest campaigns in Fate City and still represents faces seen on every surface a Wire can render an ad onto. What's changed is what happens to those faces once the campaign ends.",
+              ],
+            },
+            {
+              heading: "What Galv\u00e8re Actually Sells",
+              paragraphs: [
+                "Sponsorships, exclusive shoots, branded everything &mdash; Galv\u00e8re will put its name on anything that photographs well, including people who never asked to become content. Controversy, scandal, charity, glamour: all of it raw material if it sells, all of it noise if it doesn't. Solenne's own rule, enforced without exception, is that nobody at the company conducts a first meeting with a new face alone, and every contract carries unusually explicit consent language. Nobody on her legal team has ever been told why.",
+              ],
+            },
+            {
+              heading: "Where the Discarded Go",
+              paragraphs: [
+                "Faces that stop being useful to Galv\u00e8re mostly just disappear from view &mdash; no severance beyond contract minimums, no public falling-out, just an absence the industry quietly stops asking about. Where they actually land afterward isn't something Galv\u00e8re publishes, and isn't something anyone's ever made them answer for.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Galv\u00e8re will turn anything unusual into a marketing angle if it photographs well, including you. Decide in advance how much of yourselves you're willing to let them sell.",
+                "A sponsorship or an exclusive Galv\u00e8re shoot is real money and a real foothold in the money world &mdash; read whatever they put in front of you twice before you sign it.",
+                "Nobody conducts a first meeting with a new face alone here, and the consent language in every contract is unusually explicit. Nobody who's asked why has ever gotten a real answer.",
+                "People who stop being useful to Galv\u00e8re don't get fired publicly. They just stop being mentioned. Worth remembering if you ever go looking for someone who used to be somebody here.",
+              ],
+            },
+          ],
+          quote: {
+            text: "Galv\u00e8re doesn't have an HR department. It has a calendar, and eventually your name comes off it.",
+            cite: "Former Galv\u00e8re contractor, exit interview (leaked)",
+          },
+        },
+
+        {
+          id: "skam",
+          category: "organization",
+          fileNo: "SK-016",
+          stamp: "CORPORATE / MILITARY — RESTRICTED",
+          colors: {
+            rule: "#0d2b3a",
+            accent: "#2f7fa6",
+            stripe: "#0d2b3a",
+            stampColor: "#2f7fa6",
+          },
+          name: "S.K.AM",
+          epithet:
+            "&ldquo;Engineered for tomorrow&rdquo; is the slogan. Nobody outside the building has ever seen the part of tomorrow it's actually building.",
+          images: ["images/skam_profile.png"],
+          stats: [
+            { label: "Species", value: "N/A — organization" },
+            {
+              label: "Role",
+              value:
+                "Military magitech contractor (legal face) / consumer technology brand (public arm)",
+            },
+            {
+              label: "Affiliation",
+              value:
+                "Privately held — Laurent Virel (Founder/CEO), Therese Virel (COO), Vel Virel (consumer division)",
+            },
+            { label: "Known For", value: "Wealth / Military Influence" },
+            {
+              label: "Reputation",
+              value:
+                "Total market saturation — runs the city's infrastructure, hardware, and at least one war nobody's supposed to know about",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "S.K.AM is the name on more of Fate City's infrastructure than any single company should reasonably hold &mdash; permits, contracts, the network every Wire runs on, and a fair share of the magitech holding the city's Weave-fused conveniences together. Founded and still run by Laurent Virel, with Therese Virel as the only person who can disagree with him in a room and lose nothing for it, the company has spent decades being too useful to question closely.",
+              ],
+            },
+            {
+              heading: "Two Catalogs Under One Logo",
+              paragraphs: [
+                "Most of what S.K.AM sells the city is exactly what it looks like: city contracts, infrastructure deals, and &mdash; through the glossier S.K.AM Technologies arm Vel runs day-to-day &mdash; the Wire in every pocket and the consumer Bloomwork lines turning antlers and fey ears into an afternoon's shopping trip. That's the catalog anyone can see.",
+                "The other catalog doesn't have a brochure. S.K.AM Advanced Magitechnologies does deals with foreign military officers over cases holding something that glows faintly blue and was clearly never meant for civilian hands. Nobody official has ever confirmed it. Nobody official has ever needed to &mdash; the contracts that matter were never going to be public record in the first place.",
+              ],
+            },
+            {
+              heading: "A Family That Runs on Two Different Currencies",
+              paragraphs: [
+                "Laurent treats money as a precise tool, patience as the real currency, and a favor owed to him as something rarely called in quickly or cheaply. Vel spends like he's speaking an entirely different language &mdash; glossier branding, looser money, a habit of funding things like a struggling street racing crew's track on what amounts to a whim. Laurent has noticed. With Laurent, the silence that follows noticing is rarely a good sign.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "S.K.AM's military contracts almost certainly fund equipment used against unregistered power-users somewhere in this city. To the company, that's business, not betrayal &mdash; keep the distinction in mind if you ever sit across from anyone wearing their logo.",
+                "The consumer arm is the easiest door into this company &mdash; Wires, Bloomwork procedures, ordinary tech support. The other door doesn't have a sign, and you don't want to find it by accident.",
+                "If you ever need to reach Laurent without walking into a boardroom, Therese is the far more approachable way in.",
+                "Whatever S.K.AM officially sells the city, it's worth remembering this company's other catalog exists somewhere too &mdash; just not on any floor you'd ever be shown.",
+              ],
+            },
+          ],
+          quote: {
+            text: "ENGINEERED FOR TOMORROW",
+            cite: "Inscription above the main entrance, S.K.AM Advanced Magitechnologies",
+          },
+        },
+
+        {
+          id: "fcpd",
+          category: "organization",
+          fileNo: "FCPD-017",
+          stamp: "LAW ENFORCEMENT — PUBLIC RECORD",
+          colors: {
+            rule: "#2a3a4a",
+            accent: "#6b8aa6",
+            stripe: "#2a3a4a",
+            stampColor: "#6b8aa6",
+          },
+          name: "FATE CITY POLICE DEPARTMENT",
+          epithet:
+            "Two official paths exist for anyone the Agency doesn't want. The police were supposed to be one of them. Most of the city stopped counting on that a while ago.",
+          images: ["images/fcpd_profile.png"],
+          stats: [
+            { label: "Species", value: "N/A — organization" },
+            { label: "Role", value: "Municipal law enforcement" },
+            {
+              label: "Affiliation",
+              value: "City government (nominal); loyalties otherwise disputed",
+            },
+            { label: "Known For", value: "Authority (on paper)" },
+            {
+              label: "Reputation",
+              value:
+                "Underfunded and widely assumed bought — present, but rarely decisive",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "On paper, the Fate City Police Department is one of exactly two official channels for handling anything outside ordinary crime &mdash; the other being the Agency. In practice, most of the city treats that as a formality. Budgets are thin, morale is thinner, and more than one precinct has a reputation for looking the other way at exactly the moments it would matter most to look closer.",
+              ],
+            },
+            {
+              heading: "Who's Actually Still Honest",
+              paragraphs: [
+                "Ask anyone who's worked a beat long enough and you'll hear the same two-part story: a department that's been bought in pieces, and a handful of people inside it who haven't been. Nobody agrees on who those people are, or how many of them there still are. The masked vigilante known only as the Street Enforcer gets named in that conversation more often than anyone official will admit to.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Calling the police in Fate City is rarely the fastest way to fix a problem, and is sometimes the fastest way to make a new one. Know which kind of trouble you're in before you decide to involve them.",
+                "A department this underfunded leans hard on whoever's paying for the gap. Worth knowing whose money that's been lately before you assume which side a badge is actually on.",
+                "If you ever need a legal favor instead of a legal problem, finding one of the department's still-honest holdouts is worth more than finding a hundred bought ones.",
+                "Whatever's actually true about the Street Enforcer, the department's official position is that he doesn't exist. Treat that denial as exactly as reliable as everything else this department says on the record.",
+              ],
+            },
+          ],
+          quote: {
+            text: "The Fate City Police Department remains fully committed to serving and protecting this community.",
+            cite: "Official department statement, reissued annually, unchanged word for word for longer than anyone's bothered to check",
+          },
+        },
+
+        {
+          id: "fcrecords",
+          category: "organization",
+          fileNo: "FCR-018",
+          stamp: "ENTERTAINMENT / MUSIC — PUBLIC",
+          colors: {
+            rule: "#3a1a2e",
+            accent: "#d9a23f",
+            stripe: "#3a1a2e",
+            stampColor: "#d9a23f",
+          },
+          name: "FATE CITY RECORDS",
+          epithet:
+            "The label behind half the songs already stuck in your head, and probably the next one too.",
+          images: ["images/fcrecords_profile.png"],
+          stats: [
+            { label: "Species", value: "N/A — organization" },
+            { label: "Role", value: "Record label / artist management" },
+            {
+              label: "Affiliation",
+              value:
+                "Independent — represents several of Fate City's biggest names in music",
+            },
+            { label: "Known For", value: "Fame / Culture" },
+            {
+              label: "Reputation",
+              value:
+                "Hit-making — has an unusually good track record of knowing who's about to be everywhere next",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: [
+                "Fate City Records is the label behind a good chunk of what's actually playing in this city's clubs, cars, and Wire feeds right now. They sign young, sign loud, and have an unusually good track record of knowing which unknown act is about to be impossible to avoid. Industry folks call it instinct. Whatever it actually is, it's made them one of the most consistently profitable labels in the city's nightlife economy.",
+                "The label leans hard on a specific kind of artist: someone whose real personality is more interesting than anything a publicist could invent. Image consultants elsewhere in the industry call that a risk. Fate City Records calls it the whole business model.",
+              ],
+            },
+            {
+              heading: "A Note From Your Benefactor",
+              hooks: [
+                "Getting signed here is a real launchpad &mdash; exposure, money, and a machine that knows how to make a name stick. Worth knowing what else that machine expects from you in return.",
+                "They move fast on anyone who photographs or sounds like trouble. That's not a complaint from inside the building. It's the strategy.",
+                "Every artist on this label seems to have at least one story about a problem that just stopped being a problem overnight. Nobody's ever traced where those calls actually came from.",
+                "A Fate City Records credit is worth real money and real reach in this city's nightlife economy. It also means the label now has a reason to pay attention to whatever you do next.",
+              ],
+            },
+          ],
+          quote: {
+            text: "We don't manufacture artists. We just make sure the real ones never run out of reasons to be interesting.",
+            cite: "Fate City Records, internal pitch deck (leaked)",
+          },
+        },
+
+        {
+          id: "benefactor",
+          category: "person",
+          fileNo: "??-???",
+          stamp: "UNKNOWN ORIGIN — UNCONFIRMED",
+          colors: {
+            rule: "#2a1a3a",
+            accent: "#9a6fd9",
+            stripe: "#2a1a3a",
+            stampColor: "#9a6fd9",
+          },
+          name: "THE MYSTERIOUS BENEFACTOR",
+          epithet:
+            "Whoever — or whatever — brought the crew to Fate City has never asked for anything back. Yet.",
+          images: ["images/mysterious_benefactor_profile.png"],
+          stats: [
+            { label: "Species", value: "Unknown" },
+            { label: "Role", value: "Unknown" },
+            { label: "Affiliation", value: "Unknown" },
+            { label: "Known For", value: "Mystery" },
+            {
+              label: "Reputation",
+              value: "None — has never been seen or named",
+            },
+          ],
+          sections: [
+            {
+              heading: "Overview",
+              paragraphs: ["PASSWORD"],
+            },
+          ],
+          quote: null,
+
+          redactedEncoded:
+            "PHAgY2xhc3M9InJlZGFjdGVkLWhlYWRpbmciPlJlZGFjdGVkIEludGVsbGlnZW5jZSDigJQgUGFydGlhbCBEZWNsYXNzaWZpY2F0aW9uPC9wPjxwIGNsYXNzPSJyZWRhY3RlZC1zdWIiPlNvdXJjZSB1bmNvbmZpcm1lZC4gUmVjb3ZlcmVkIGluIGZyYWdtZW50cy4gU29tZSByZWRhY3Rpb25zIHBlcmZvcm1lZCBieSB0aGUgc3ViamVjdCB0aGVtc2VsZiDigJQgbWV0aG9kIHVua25vd24uPC9wPjxwPuKWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWkyBkaWQgbm90IGJlZ2luIGluIEZhdGUgQ2l0eS4g4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paTIGFycml2ZWQgYW4gb3V0c2lkZXIsIG9uZSBvZiB0aHJlZSBicm91Z2h0IGluIGFyb3VuZCB0aGUgc2FtZSB0aW1lIOKWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWkyB3YXMgc3RpbGwgY2xpbWJpbmcg4oCUIG5vdCB5ZXQgcG93ZXJmdWwsIGp1c3Qgc29tZW9uZSB3aXRoIG1vbmV5IGFuZCBhIGxvbmcgbGlzdCBvZiBwZW9wbGUgd2hvIGRpZG4ndCB5ZXQgb3dlIHRoZW0gYW55dGhpbmcuPC9wPjxwPlRoZSB0aHJlZSBvZiB0aGVtIGJ1aWx0IGEgcmVwdXRhdGlvbiB0aGUgb2xkLWZhc2hpb25lZCB3YXkuIFdoYXRldmVyIG5lZWRlZCBkaWdnaW5nIHVwLCB0aGV5IGR1Zy4gV2hhdGV2ZXIgbmVlZGVkIHRvIHF1aWV0bHkgc3RvcCBiZWluZyBhIHByb2JsZW0sIHN0b3BwZWQgYmVpbmcgYSBwcm9ibGVtLiBCeSB0aGUgdGltZSDilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpMgaGFkIHdoYXQgdGhleSB3YW50ZWQsIHRoZSB0aHJlZSBvZiB0aGVtIHdlcmVuJ3QganVzdCB1c2VmdWwgYW55bW9yZSDigJQgdGhleSB3ZXJlIHRoZSBvbmx5IGxpdmluZyByZWNvcmQgb2YgaG93IGl0IGhhZCBhY3R1YWxseSBoYXBwZW5lZC4gVGhhdCBzdG9wcGVkIGJlaW5nIHNhZmUgdG8gYmUsIGZvciBhbGwgdGhyZWUgb2YgdGhlbSwgb24gdGhlIHNhbWUgbmlnaHQuPC9wPjxwPlR3byBkaWQgbm90IHN1cnZpdmUgdGhhdCBuaWdodC4gVGhlIHRoaXJkIHdhcyBtZWFudCB0byBiZSB0aGUgdGhpcmQuIOKWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWkyDilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpMg4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paTLCBsZWZ0IGZvciBjb25maXJtZWQgZGVhZC4gTm9ib2R5IGV2ZXIgY2hlY2tlZCB0d2ljZS48L3A+PHA+4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paTIGRpZCBub3Qgc3VyZmFjZSBhZ2FpbiB1bmRlciB0aGUgc2FtZSBuYW1lLiDilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpPilpMg4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paTIOKWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWk+KWkyDigJQgYSBjbGVhbiBjb3ZlciwgbW9iaWxlLCBidWlsdCBvbiBhIGZhY2Ugbm9ib2R5IGlzIGxvb2tpbmcgZm9yLCBiZWNhdXNlIHRoZSBmYWNlIHRoZXkgcmVtZW1iZXIgaXNuJ3Qgc3VwcG9zZWQgdG8gZXhpc3QgYW55bW9yZS48L3A+PHA+VGhpcyBpcyBub3QgYWJvdXQgZXhwb3N1cmUuIFRoaXMgaXMgYWJvdXQgYmVjb21pbmcgdGhlIHRoaW5nIHRoYXQgYnVpbHQg4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paT4paTIGluIHRoZSBmaXJzdCBwbGFjZSDigJQgbGV2ZXJhZ2UsIHBhdGllbmNlLCBhIGxlZGdlciBub2JvZHkgc2VlcyB1bnRpbCBpdCdzIGFscmVhZHkgY2FsbGVkIGluLiBUaGVyZSBpcyBubyBmYWN0aW9uIGJlaGluZCB0aGlzLiBObyBwcm90ZWN0aW9uIHJhY2tldCwgbm8gbXVzY2xlIG9uIHJldGFpbmVyLiBPbmx5IHRoZSBzYW1lIHNraWxsc2V0IG9uY2UgdXNlZCB0byBidWlsZCBzb21lb25lIGVsc2UncyBwb3dlciwgbm93IGFpbWVkIGF0IHRoZSBvbmUgd2hvIHVzZWQgaXQuPC9wPg==",
+        },
+      ];
+
+      // ===================== RENDER ENGINE =====================
+      // You shouldn't need to edit anything below this line.
+
+      function escapeAttr(str) {
+        return String(str).replace(/"/g, "&quot;");
+      }
+
+      function renderCard(npc) {
+        const c = npc.colors || {};
+        const gallery = (npc.images || [])
+          .map(
+            (src) => `
+                <div class="thumb" data-full="${escapeAttr(src)}" data-caption="${escapeAttr(npc.name)}">
+                  <img src="${escapeAttr(src)}" alt="${escapeAttr(npc.name)}" />
+                </div>`,
+          )
+          .join("");
+
+        const stats = (npc.stats || [])
+          .map(
+            (s) => `
+                <div class="stat-row">
+                  <span class="label">${s.label}</span><span class="value">${s.value}</span>
+                </div>`,
+          )
+          .join("");
+
+        const sections = (npc.sections || [])
+          .map((sec) => {
+            const heading = sec.heading ? `<h3>${sec.heading}</h3>` : "";
+            const paras = (sec.paragraphs || [])
+              .map((p) => `<p>${p}</p>`)
+              .join("");
+            const hooks = sec.hooks
+              ? `<ul class="hooks">${sec.hooks.map((h) => `<li>${h}</li>`).join("")}</ul>`
+              : "";
+            return heading + paras + hooks;
+          })
+          .join("");
+
+        const quote = npc.quote
+          ? `<blockquote>${npc.quote.text}<span class="cite">${npc.quote.cite}</span></blockquote>`
+          : "";
+
+        const redacted = npc.redactedEncoded
+          ? `<div class="redacted-gate" data-redacted-gate="${npc.id}">
+                  <input type="password" autocomplete="off" spellcheck="false" />
+                  <button type="button">&#8594;</button>
+                </div>
+                <div class="redacted-block" data-redacted="${npc.id}" data-encoded="${npc.redactedEncoded}"></div>`
+          : "";
+
+        return `
+              <div class="card" style="--rule:${c.rule || "#b8902f"}; --accent:${c.accent || "#b8902f"}">
+                <div class="stripe" style="background:${c.stripe || c.rule || "#b8902f"}"></div>
+                <div class="dossier-head">
+                  <span>FILE NO. ${npc.fileNo || "—"}</span>
+                  <span class="stamp" style="color:${c.stampColor || c.accent || "#b8902f"}">${npc.stamp || ""}</span>
+                </div>
+                <hr class="hr" />
+                <div class="name-block">
+                  <h2>${npc.name}</h2>
+                  <p class="epithet">${npc.epithet || ""}</p>
+                </div>
+                <div class="gallery" data-gallery="${npc.id}">${gallery}</div>
+                <div class="stats">${stats}</div>
+                <div class="section">${sections}</div>
+                ${quote}
+                ${redacted}
+                <div class="footer-pad"></div>
+              </div>`;
+      }
+
+      function renderSectionDivider(label, isFirst) {
+        return `
+              <div class="section-divider${isFirst ? " first" : ""}">
+                <span class="section-divider-label">${label}</span>
+              </div>`;
+      }
+
+      function renderAll() {
+        const root = document.getElementById("cards-root");
+        const briefings = NPCS.filter((n) => n.category === "briefing");
+        const persons = NPCS.filter((n) => n.category === "person");
+        const organizations = NPCS.filter((n) => n.category === "organization");
+
+        let html = "";
+        if (briefings.length) {
+          html += renderSectionDivider("City Briefing", true);
+          html += briefings.map(renderCard).join("");
+        }
+        if (persons.length) {
+          html += renderSectionDivider(
+            "Persons of Interest",
+            !briefings.length,
+          );
+          html += persons.map(renderCard).join("");
+        }
+        if (organizations.length) {
+          html += renderSectionDivider("Organizations of Interest", false);
+          html += organizations.map(renderCard).join("");
+        }
+        root.innerHTML = html;
+        wireGalleries();
+        wirePasswordReveal();
+      }
+
+      // ===================== HIDDEN REVEAL =====================
+      // NPCs with a `redactedEncoded` field get a bare password field
+      // rendered in place of their redacted dossier section. No label,
+      // no hint text — just the input. Correct password decodes the
+      // base64 payload client-side and swaps it in.
+      function wirePasswordReveal() {
+        const PASSWORD = "03171989";
+
+        document.querySelectorAll(".redacted-gate").forEach((gate) => {
+          const npcId = gate.getAttribute("data-redacted-gate");
+          const input = gate.querySelector("input");
+          const block = document.querySelector(
+            '.redacted-block[data-redacted="' + npcId + '"]',
+          );
+          if (!input || !block) return;
+
+          function attemptUnlock() {
+            const value = input.value.trim().toLowerCase();
+            if (value !== PASSWORD) {
+              input.value = "";
+              gate.classList.add("shake");
+              setTimeout(() => gate.classList.remove("shake"), 400);
+              return;
+            }
+            const encoded = block.getAttribute("data-encoded");
+            try {
+              const decoded = decodeURIComponent(
+                Array.prototype.map
+                  .call(
+                    atob(encoded),
+                    (c) =>
+                      "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2),
+                  )
+                  .join(""),
+              );
+              block.innerHTML = decoded;
+              block.classList.add("revealed");
+              gate.remove();
+            } catch (e) {
+              // decode failed silently — leave gate in place
+            }
+          }
+
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") attemptUnlock();
+          });
+          gate.querySelector("button").addEventListener("click", attemptUnlock);
+        });
+      }
+
+      // ===================== LIGHTBOX =====================
+      function wireGalleries() {
+        const lightbox = document.getElementById("lightbox");
+        const lbImg = document.getElementById("lb-img");
+        const lbCaption = document.getElementById("lb-caption");
+        let currentGallery = [];
+        let currentIndex = 0;
+
+        function showCurrent() {
+          const thumb = currentGallery[currentIndex];
+          lbImg.src = thumb.getAttribute("data-full");
+          lbCaption.textContent = thumb.getAttribute("data-caption") || "";
+          const multi = currentGallery.length > 1;
+          document.getElementById("lb-prev").style.display = multi
+            ? "block"
+            : "none";
+          document.getElementById("lb-next").style.display = multi
+            ? "block"
+            : "none";
+        }
+
+        function openLightbox(galleryName, index) {
+          currentGallery = Array.prototype.slice.call(
+            document.querySelectorAll(
+              '.gallery[data-gallery="' + galleryName + '"] .thumb',
+            ),
+          );
+          currentIndex = index;
+          showCurrent();
+          lightbox.classList.add("open");
+        }
+
+        function closeLightbox() {
+          lightbox.classList.remove("open");
+          lbImg.src = "";
+        }
+
+        document.querySelectorAll(".gallery .thumb").forEach((thumb) => {
+          thumb.addEventListener("click", () => {
+            const gallery = thumb.closest(".gallery");
+            const galleryName = gallery.getAttribute("data-gallery");
+            const thumbs = Array.prototype.slice.call(
+              gallery.querySelectorAll(".thumb"),
+            );
+            openLightbox(galleryName, thumbs.indexOf(thumb));
+          });
+        });
+
+        document.getElementById("lb-close").onclick = closeLightbox;
+        lightbox.onclick = (e) => {
+          if (e.target === lightbox) closeLightbox();
+        };
+        document.getElementById("lb-prev").onclick = (e) => {
+          e.stopPropagation();
+          if (currentGallery.length < 2) return;
+          currentIndex =
+            (currentIndex - 1 + currentGallery.length) % currentGallery.length;
+          showCurrent();
+        };
+        document.getElementById("lb-next").onclick = (e) => {
+          e.stopPropagation();
+          if (currentGallery.length < 2) return;
+          currentIndex = (currentIndex + 1) % currentGallery.length;
+          showCurrent();
+        };
+        document.addEventListener("keydown", (e) => {
+          if (!lightbox.classList.contains("open")) return;
+          if (e.key === "Escape") closeLightbox();
+          if (e.key === "ArrowLeft") document.getElementById("lb-prev").click();
+          if (e.key === "ArrowRight")
+            document.getElementById("lb-next").click();
+        });
+      }
+
+      renderAll();
+
+      // ===== WIRE CLOCK =====
+      (function () {
+        function tick() {
+          var el = document.getElementById('wire-clock');
+          if (!el) return;
+          var n = new Date();
+          var h = String(n.getHours()).padStart(2, '0');
+          var m = String(n.getMinutes()).padStart(2, '0');
+          el.textContent = h + ':' + m;
+        }
+        tick();
+        setInterval(tick, 15000);
+      })();
+    </script>
+    <!-- ===== WIRE HOME BAR ===== -->
+    <div class="wire-home">
+      <div class="wire-home-ind" aria-hidden="true"></div>
+    </div>
+  </body>
+</html>
